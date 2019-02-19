@@ -1,5 +1,11 @@
 package Tester;
 
+
+/**
+ * Software to test a particular configuration
+ * @author Andrea Piretti
+ *
+ */
 public class Tester {
 	
 	private TestGui theTestGui;
