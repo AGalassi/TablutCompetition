@@ -1,6 +1,0 @@
-feb 15, 2019 3:10:55 PM Domain.GameAshtonTablut <init>
-BUONO: Inizio partita
-feb 15, 2019 3:12:32 PM Domain.GameAshtonTablut checkMove
-BUONO: Turn: B Pawn from i5 to g5
-feb 15, 2019 3:12:32 PM Domain.GameAshtonTablut checkMove
-AVVERTENZA: Mossa sopra una casella occupata
