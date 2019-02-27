@@ -6,21 +6,27 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import it.unibo.ai.didattica.competition.tablut.domain.Action;
-import it.unibo.ai.didattica.competition.tablut.domain.State;
-import it.unibo.ai.didattica.competition.tablut.domain.StateTablut;
+import it.unibo.ai.didattica.competition.tablut.domain.*;
 
-/**
- * Tablut random players (tablut game)
- *
- */
 public class TablutRandomClient extends TablutClient{
 	
 	private ClientController controller;
 
 	public TablutRandomClient(String player, int gameChosen) throws UnknownHostException, IOException {
 		super(player);
-		this.controller = new ClientControllerTablut();
+		if(gameChosen==0)
+		{
+			this.controller = new ClientControllerTablut();
+		}
+		else 
+		{
+			this.controller = new ClientControllerAshtonTablut();
+		}
+	}
+	
+	public TablutRandomClient(String player) throws UnknownHostException, IOException {
+		super(player);
+		this.controller = new ClientControllerAshtonTablut();
 	}
 	
 	public ClientController getController() {
@@ -33,9 +39,9 @@ public class TablutRandomClient extends TablutClient{
 
 	public static void main(String[] args) throws UnknownHostException, IOException, ClassNotFoundException
 	{
-
-		if (args.length == 0) {
-			System.out.println("You must specify which player you are (WHITE or BLACK)!");
+		// TODO: change the behavior?
+		if (args.length < 2) {
+			System.out.println("You must specify which player you are (WHITE or BLACK) and specify the game!");
 			System.exit(-1);
 		}
 		System.out.println("Selected client: " + args[0]);
@@ -46,7 +52,7 @@ public class TablutRandomClient extends TablutClient{
 		if ((args[0]=="WHITE")||(args[0]=="white"))
 		{
 			//da modificare
-			client = new TablutRandomClient("WHITE", 0);
+			client = new TablutRandomClient("WHITE", Integer.parseInt(args[1]));
 			
 			System.out.println("You are player " + client.getPlayer().toString() + "!");
 			
@@ -126,7 +132,7 @@ public class TablutRandomClient extends TablutClient{
 		else 
 		{
 			//da modificare
-			client = new TablutRandomClient("BLACK", 0);
+			client = new TablutRandomClient("BLACK", Integer.parseInt(args[1]));
 			
 			
 			System.out.println("You are player " + client.getPlayer().toString() + "!");

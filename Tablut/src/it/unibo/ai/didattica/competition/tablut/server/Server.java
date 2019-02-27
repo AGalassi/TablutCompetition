@@ -18,28 +18,55 @@ import com.google.gson.Gson;
  * this class represent the server of the match: 2 clients with TCP connection
  * can connect and start to play
  * 
- * @author A.Piretti
+ * @author A.Piretti, Andrea Galassi
  *
  */
 public class Server {
 
+	/**
+	 * State of the game
+	 */
 	private static State state;
+	/**
+	 * Number of seconds allowed for a decision
+	 */
 	private static int time;
+	/**
+	 * Number of states kept in memory for the detection of a draw
+	 */
 	private static int moveCache;
+	/**
+	 * Integer that represents the game type
+	 */
 	private static int gameChosen;
+	/**
+	 * JSON string used to communicate
+	 */
 	private static String theGson;
+	/**
+	 * Action chosen by a player
+	 */
 	private static Action move;
 	private static int errors;
 
 	private ServerSocket socketWhite;
 	private ServerSocket socketBlack;
 
+	/**
+	 * Counter for the errors of the black player
+	 */
 	private int blackErrors;
+	/**
+	 * Counter for the errors of the white player
+	 */
 	private int whiteErrors;
 
 	private Game game;
 	private Gson gson;
 	private Gui theGui;
+	/**
+	 * Integer that represents the game type
+	 */
 	private int gameC;
 
 	public Server(int timeout, int cacheSize, int numErrors, int game) {
@@ -82,16 +109,19 @@ public class Server {
 	 * match
 	 * 
 	 * @param args
-	 *            we have in order: the time for the move, cache, errors, type
-	 *            of game
+	 *            the time for the move, the size of the cache for monitoring
+	 *            draws, the number of errors allowed, the type of game
 	 * 
 	 */
 	public static void main(String[] args) {
 		time = 60;
-		moveCache = 20;
+		moveCache = 100;
 		errors = 0;
 		gameChosen = 4;
-		String usage = "Usage: java ENGINE <time> <cache> <errors> <game>";
+		String usage = "Usage: java ENGINE <time> <cache> <errors> <game>\n"
+				+ "\tgame must be an integer; 1 for Tablut, 2 for Modern, 3 for Brandub, 4 for Ashton; default: 4\n"
+				+ "\terrors must be an integer; default: 0\n" + "\tcache must be an integer; default: 100\n"
+				+ "time must be an integer (number of seconds); default: 60";
 		if (args.length > 0) {
 			try {
 				time = Integer.parseInt(args[0]);
@@ -149,9 +179,9 @@ public class Server {
 				System.exit(1);
 			}
 		}
-		// LANCIO IL MOTORE PER UN SERVER
-		Server engine = new Server(time, moveCache, errors, gameChosen);
 
+		// Start the server
+		Server engine = new Server(time, moveCache, errors, gameChosen);
 		engine.run();
 	}
 
@@ -180,10 +210,21 @@ public class Server {
 
 	/**
 	 * This method starts the proper game. It waits the connections from 2
-	 * clients, check the move and update the state. There is a timeout of 5
-	 * hours to wait the connections.
+	 * clients, check the move and update the state. There is a timeout that
+	 * interrupts games that last too much
 	 */
 	public void run() {
+		/**
+		 * Number of hours that a game can last before the timeout
+		 */
+		int hourlimit = 5;
+		/**
+		 * Endgame state reached?
+		 */
+		boolean endgame = false;
+		/**
+		 * Name of the systemlog
+		 */
 		String sysLogName = (new Date().getTime()) + "_systemLog.txt";
 		@SuppressWarnings("unused")
 		File systemLog = new File(sysLogName);
@@ -221,13 +262,26 @@ public class Server {
 		Thread t;
 		Socket white = null;
 		Socket black = null;
+		/**
+		 * Channel to receive the move of the white player
+		 */
 		DataInputStream whiteMove = null;
+		/**
+		 * Channel to receive the move of the black player
+		 */
 		DataInputStream blackMove = null;
+		/**
+		 * Channel to send the state to the white player
+		 */
 		DataOutputStream whiteState = null;
+		/**
+		 * Channel to send the state to the black player
+		 */
 		DataOutputStream blackState = null;
 		System.out.println("Waiting for connections...");
-		try {
 
+		// ESTABLISH CONNECTIONS
+		try {
 			this.socketWhite = new ServerSocket(5800);
 			this.socketBlack = new ServerSocket(5801);
 
@@ -248,6 +302,11 @@ public class Server {
 		}
 
 		System.out.println("Clients connected..");
+
+		// SEND INITIAL STATE
+		/**
+		 * Socket of the current player
+		 */
 		TCPInput tin = null;
 		TCPInput Turnwhite = new TCPInput(whiteMove);
 		TCPInput Turnblack = new TCPInput(blackMove);
@@ -265,12 +324,15 @@ public class Server {
 			System.exit(1);
 		}
 
-		while (true) {
+		// GAME CYCLE
+		while (!endgame) {
+			// RECEIVE MOVE
+			
 			// System.out.println("State: \n"+state.toString());
 			System.out.println("Waiting for " + state.getTurn() + "...");
 			Date ti = new Date();
 			long hoursoccurred = (ti.getTime() - starttime.getTime()) / 60 / 60 / 1000;
-			if (hoursoccurred > 5) {
+			if (hoursoccurred > hourlimit) {
 				System.out.println("TIMEOUT! END OF THE GAME...");
 				loggSys.warning("Chiusura programma per timeout di cinque ore");
 			}
@@ -292,10 +354,12 @@ public class Server {
 				loggSys.warning("Chiusura sistema per errore turno");
 				System.exit(4);
 			}
+			// create the process that listen the answer
 			t = new Thread(tin);
 			t.start();
 			loggSys.fine("Lettura mossa player " + state.getTurn() + " in corso..");
 			try {
+				// timer for the move
 				int counter = 0;
 				while (counter < time && t.isAlive()) {
 					Thread.sleep(1000);
@@ -304,6 +368,7 @@ public class Server {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
+			// loss for timeout
 			if (t.isAlive()) {
 				System.out.println("Timeout!!!!");
 				System.out.println("Player " + state.getTurn().toString() + " has lost!");
@@ -312,12 +377,15 @@ public class Server {
 				System.exit(0);
 			}
 
+			// APPLY MOVE
+			// translate the string into an action object
 			move = this.gson.fromJson(theGson, Action.class);
 
 			try {
 				// aggiorna tutto e determina anche eventuali fine partita
 				state = this.game.checkMove(state, move);
 			} catch (Exception e) {
+				// exception means error, therefore increase the error counters
 				if (state.getTurn().equalsTurn("B")) {
 					this.blackErrors++;
 
@@ -343,6 +411,7 @@ public class Server {
 				}
 			}
 
+			// SEND STATE TO PLAYERS
 			try {
 				theGson = gson.toJson(state);
 				whiteState.writeUTF(theGson);
@@ -356,6 +425,7 @@ public class Server {
 				System.exit(1);
 			}
 
+			// CHECK END OF GAME
 			if (!state.getTurn().equalsTurn("W") && !state.getTurn().equalsTurn("B")) {
 				System.out.println("END OF THE GAME");
 				if (state.getTurn().equalsTurn(StateTablut.Turn.DRAW.toString())) {
@@ -367,7 +437,7 @@ public class Server {
 				if (state.getTurn().equalsTurn(StateTablut.Turn.BLACKWIN.toString())) {
 					System.out.println("RESULT: PLAYER BLACK WIN");
 				}
-				System.exit(0);
+				endgame=true;
 			}
 		}
 	}

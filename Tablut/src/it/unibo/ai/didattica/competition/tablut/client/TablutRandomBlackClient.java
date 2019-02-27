@@ -6,7 +6,7 @@ import java.net.UnknownHostException;
 public class TablutRandomBlackClient {
 	
 	public static void main(String[] args) throws UnknownHostException, ClassNotFoundException, IOException {
-		String[] array = new String[]{"BLACK"};
+		String[] array = new String[]{"BLACK", args[0]};
 		TablutRandomClient.main(array);
 	}
 

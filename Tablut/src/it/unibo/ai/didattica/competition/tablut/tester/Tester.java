@@ -3,7 +3,7 @@ package it.unibo.ai.didattica.competition.tablut.tester;
 
 /**
  * Software to test a particular configuration.
- * Insert the cell coordinates as "A1" "B4" and so on. Provide moves commands from a cell A1 to another B1 as "A1B1"
+ * Insert the cell coordinates as "A1" "B4" and so on. Provide moves commands from a cell A1 to another B1 as "A1 B1"
  * @author Andrea Piretti
  *
  */
@@ -63,7 +63,5 @@ public class Tester {
 	public void setTheTestGui(TestGui theTestGui) {
 		this.theTestGui = theTestGui;
 	}
-	
-	
 	
 }

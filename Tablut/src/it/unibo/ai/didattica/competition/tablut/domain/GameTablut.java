@@ -139,7 +139,7 @@ public class GameTablut implements Game {
 			{
 				for(int i=columnTo; i<columnFrom; i++)
 				{
-					if(!state.getPawn(rowFrom, i).equalsPawn(State.Pawn.EMPTY.toString()) && !state.getPawn(rowFrom, i).equalsPawn(State.Pawn.THRONE.toString()))
+					if(!state.getPawn(rowFrom, i).equalsPawn(State.Pawn.EMPTY.toString()))
 					{
 						this.loggGame.warning("Mossa che scavalca una pedina");
 						throw new ClimbingException(a);
@@ -150,7 +150,7 @@ public class GameTablut implements Game {
 			{
 				for(int i=columnFrom+1; i<=columnTo; i++)
 				{
-					if(!state.getPawn(rowFrom, i).equalsPawn(State.Pawn.EMPTY.toString()) && !state.getPawn(rowFrom, i).equalsPawn(State.Pawn.THRONE.toString()))
+					if(!state.getPawn(rowFrom, i).equalsPawn(State.Pawn.EMPTY.toString()))
 					{
 						this.loggGame.warning("Mossa che scavalca una pedina");
 						throw new ClimbingException(a);
