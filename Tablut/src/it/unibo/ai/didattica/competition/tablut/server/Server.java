@@ -40,6 +40,11 @@ public class Server {
 	 */
 	private static int gameChosen;
 	/**
+	 * Whether the gui must be enabled or not
+	 */
+	private static boolean enableGui;
+
+	/**
 	 * JSON string used to communicate
 	 */
 	private static String theGson;
@@ -69,8 +74,13 @@ public class Server {
 	 */
 	private int gameC;
 
-	public Server(int timeout, int cacheSize, int numErrors, int game) {
+	public Server(int timeout, int cacheSize, int numErrors, int game, boolean gui) {
 		this.gameC = game;
+		this.enableGui = gui;
+		this.time = timeout;
+		this.moveCache = cacheSize;
+		this.errors = numErrors;
+
 		switch (this.gameC) {
 		case 1:
 			state = new StateTablut();
@@ -93,14 +103,11 @@ public class Server {
 			System.out.println("Error in game selection");
 			System.exit(4);
 		}
-
-		Server.time = timeout;
-		Server.moveCache = cacheSize;
-		Server.errors = numErrors;
-
 		this.gson = new Gson();
-		theGui = new Gui(this.gameC);
-		theGui.update(state);
+		if (enableGui) {
+			theGui = new Gui(this.gameC);
+			theGui.update(state);
+		}
 
 	}
 
@@ -118,7 +125,9 @@ public class Server {
 		moveCache = 100;
 		errors = 0;
 		gameChosen = 4;
-		String usage = "Usage: java ENGINE <time> <cache> <errors> <game>\n"
+		enableGui = true;
+		String usage = "Usage: java ENGINE <time> <cache> <errors> <game> <enableGUI>\n"
+				+ "\tenableGUI must be >0 for enabling it; default 1"
 				+ "\tgame must be an integer; 1 for Tablut, 2 for Modern, 3 for Brandub, 4 for Ashton; default: 4\n"
 				+ "\terrors must be an integer; default: 0\n" + "\tcache must be an integer; default: 100\n"
 				+ "time must be an integer (number of seconds); default: 60";
@@ -179,9 +188,21 @@ public class Server {
 				System.exit(1);
 			}
 		}
+		if (args.length > 4) {
+			try {
+				float gui = Float.parseFloat(args[4]);
+				if (gui <= 0) {
+					enableGui = false;
+				}
+			} catch (Exception e) {
+				System.out.println("The enableGUI format is not correct!");
+				System.out.println(usage);
+				System.exit(1);
+			}
+		}
 
 		// Start the server
-		Server engine = new Server(time, moveCache, errors, gameChosen);
+		Server engine = new Server(time, moveCache, errors, gameChosen, enableGui);
 		engine.run();
 	}
 
@@ -316,7 +337,9 @@ public class Server {
 			whiteState.writeUTF(theGson);
 			blackState.writeUTF(theGson);
 			loggSys.fine("Invio messaggio ai giocatori");
-			theGui.update(state);
+			if (enableGui) {
+				theGui.update(state);
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 			loggSys.fine("Errore invio messaggio ai giocatori");
@@ -327,7 +350,7 @@ public class Server {
 		// GAME CYCLE
 		while (!endgame) {
 			// RECEIVE MOVE
-			
+
 			// System.out.println("State: \n"+state.toString());
 			System.out.println("Waiting for " + state.getTurn() + "...");
 			Date ti = new Date();
@@ -417,7 +440,9 @@ public class Server {
 				whiteState.writeUTF(theGson);
 				blackState.writeUTF(theGson);
 				loggSys.fine("Invio messaggio ai client");
-				theGui.update(state);
+				if (enableGui) {
+					theGui.update(state);
+				}
 			} catch (IOException e) {
 				e.printStackTrace();
 				loggSys.warning("Errore invio messaggio ai client");
@@ -437,7 +462,7 @@ public class Server {
 				if (state.getTurn().equalsTurn(StateTablut.Turn.BLACKWIN.toString())) {
 					System.out.println("RESULT: PLAYER BLACK WIN");
 				}
-				endgame=true;
+				endgame = true;
 			}
 		}
 	}
