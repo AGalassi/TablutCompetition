@@ -76,10 +76,10 @@ public class Server {
 
 	public Server(int timeout, int cacheSize, int numErrors, int game, boolean gui) {
 		this.gameC = game;
-		this.enableGui = gui;
-		this.time = timeout;
-		this.moveCache = cacheSize;
-		this.errors = numErrors;
+		Server.enableGui = gui;
+		Server.time = timeout;
+		Server.moveCache = cacheSize;
+		Server.errors = numErrors;
 
 		switch (this.gameC) {
 		case 1:
@@ -246,21 +246,28 @@ public class Server {
 		/**
 		 * Name of the systemlog
 		 */
-		String sysLogName = (new Date().getTime()) + "_systemLog.txt";
-		@SuppressWarnings("unused")
-		File systemLog = new File(sysLogName);
-		FileHandler fh = null;
+		File f = new File("LOGS");
+		Logger loggSys = Logger.getLogger("SysLog");
 		try {
+			// String sysLogName = (File.separatorChar + "LOGS" +
+			// File.separatorChar + new Date().getTime()+ "_systemLog.txt");
+			String sysLogName = (new Date().getTime() + "_systemLog.txt");
+			System.out.println(sysLogName);
+			File systemLog = new File(sysLogName);
+			if (!systemLog.exists()) {
+				f.mkdirs();
+				f.createNewFile();
+			}
+			FileHandler fh = null;
 			fh = new FileHandler(sysLogName, true);
+			loggSys.addHandler(fh);
+			fh.setFormatter(new SimpleFormatter());
+			loggSys.setLevel(Level.FINE);
+			loggSys.fine("Accensione server");
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.exit(1);
 		}
-		Logger loggSys = Logger.getLogger("SysLog");
-		loggSys.addHandler(fh);
-		fh.setFormatter(new SimpleFormatter());
-		loggSys.setLevel(Level.FINE);
-		loggSys.fine("Accensione server");
 		switch (gameC) {
 		case 1:
 			loggSys.fine("Partita di ClassicTablut");

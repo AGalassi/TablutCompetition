@@ -8,27 +8,23 @@ import java.util.Random;
 
 import it.unibo.ai.didattica.competition.tablut.domain.*;
 
-public class TablutRandomClient extends TablutClient{
-	
+public class TablutRandomClient extends TablutClient {
+
 	private ClientController controller;
 
 	public TablutRandomClient(String player, int gameChosen) throws UnknownHostException, IOException {
 		super(player);
-		if(gameChosen==0)
-		{
+		if (gameChosen == 0) {
 			this.controller = new ClientControllerTablut();
-		}
-		else 
-		{
+		} else {
 			this.controller = new ClientControllerAshtonTablut();
 		}
 	}
-	
+
 	public TablutRandomClient(String player) throws UnknownHostException, IOException {
-		super(player);
-		this.controller = new ClientControllerAshtonTablut();
+		this(player, 1);
 	}
-	
+
 	public ClientController getController() {
 		return controller;
 	}
@@ -37,179 +33,154 @@ public class TablutRandomClient extends TablutClient{
 		this.controller = controller;
 	}
 
-	public static void main(String[] args) throws UnknownHostException, IOException, ClassNotFoundException
-	{
+	public static void main(String[] args) throws UnknownHostException, IOException, ClassNotFoundException {
+		int game = 1;
 		// TODO: change the behavior?
-		if (args.length < 2) {
+		if (args.length < 1) {
 			System.out.println("You must specify which player you are (WHITE or BLACK) and specify the game!");
 			System.exit(-1);
+		}
+		if (args.length == 2) {
+			game = Integer.parseInt(args[1]);
 		}
 		System.out.println("Selected client: " + args[0]);
 
 		TablutRandomClient client = null;
 		List<int[]> pawns = new ArrayList<int[]>();
-		
-		if ((args[0]=="WHITE")||(args[0]=="white"))
-		{
-			//da modificare
-			client = new TablutRandomClient("WHITE", Integer.parseInt(args[1]));
-			
+
+		String color = args[0].toLowerCase();
+
+		if (color.equals("white")) {
+			// da modificare
+			client = new TablutRandomClient("WHITE", game);
+
 			System.out.println("You are player " + client.getPlayer().toString() + "!");
-			
-			while (true) 
-			{
+
+			while (true) {
 				client.read();
 				System.out.println("Current state:");
 				System.out.println(client.getCurrentState().toString());
-				try 
-				{
+				try {
 					Thread.sleep(1000);
-				} 
-				catch (InterruptedException e) {}
-				//è il mio turno
-				if(client.getCurrentState().getTurn().equals(StateTablut.Turn.WHITE))
-				{
+				} catch (InterruptedException e) {
+				}
+				// è il mio turno
+				if (client.getCurrentState().getTurn().equals(StateTablut.Turn.WHITE)) {
 					int[] buf;
-					for(int i=0; i<client.getCurrentState().getBoard().length; i++)
-					{
-						for(int j=0; j<client.getCurrentState().getBoard().length; j++)
-						{
-							if(client.getCurrentState().getPawn(i, j).equalsPawn(State.Pawn.WHITE.toString())||client.getCurrentState().getPawn(i, j).equalsPawn(State.Pawn.KING.toString()))
-							{
+					for (int i = 0; i < client.getCurrentState().getBoard().length; i++) {
+						for (int j = 0; j < client.getCurrentState().getBoard().length; j++) {
+							if (client.getCurrentState().getPawn(i, j).equalsPawn(State.Pawn.WHITE.toString())
+									|| client.getCurrentState().getPawn(i, j).equalsPawn(State.Pawn.KING.toString())) {
 								buf = new int[2];
-								buf[0]=i;
-								buf[1]=j;
+								buf[0] = i;
+								buf[1] = j;
 								pawns.add(buf);
 							}
-						}						
+						}
 					}
-					
-					int[] selected = null;
-					
-					boolean found=false;
-					while(!found)
-					{
-						selected=pawns.get(new Random().nextInt(pawns.size()-1));
-						found=client.getController().canMove(client.getCurrentState(), selected[0], selected[1]);
-					}
-					System.out.println("Pedina scelta: "+client.getCurrentState().getBox(selected[0], selected[1]));
 
-										
-					String to = client.getController().chooseDestination(client.getCurrentState(), selected[0], selected[1]);
+					int[] selected = null;
+
+					boolean found = false;
+					while (!found) {
+						selected = pawns.get(new Random().nextInt(pawns.size() - 1));
+						found = client.getController().canMove(client.getCurrentState(), selected[0], selected[1]);
+					}
+					System.out.println("Pedina scelta: " + client.getCurrentState().getBox(selected[0], selected[1]));
+
+					String to = client.getController().chooseDestination(client.getCurrentState(), selected[0],
+							selected[1]);
 					String from = client.getCurrentState().getBox(selected[0], selected[1]);
-					
-					
+
 					Action a = new Action(from, to, State.Turn.WHITE);
-					
+
 					client.write(a);
 					pawns.clear();
-					
+
 				}
-				//è il turno dell'avversario
-				if(client.getCurrentState().getTurn().equals(StateTablut.Turn.BLACK))
-				{
+				// è il turno dell'avversario
+				if (client.getCurrentState().getTurn().equals(StateTablut.Turn.BLACK)) {
 					System.out.println("Waiting for your opponent move... ");
 				}
-				//ho vinto
-				if(client.getCurrentState().getTurn().equals(StateTablut.Turn.WHITEWIN))
-				{
+				// ho vinto
+				if (client.getCurrentState().getTurn().equals(StateTablut.Turn.WHITEWIN)) {
 					System.out.println("YOU WIN!");
 					System.exit(0);
 				}
-				//ho perso
-				if(client.getCurrentState().getTurn().equals(StateTablut.Turn.BLACKWIN))
-				{
+				// ho perso
+				if (client.getCurrentState().getTurn().equals(StateTablut.Turn.BLACKWIN)) {
 					System.out.println("YOU LOSE!");
 					System.exit(0);
 				}
-				if(client.getCurrentState().getTurn().equals(StateTablut.Turn.DRAW))
-				{
+				if (client.getCurrentState().getTurn().equals(StateTablut.Turn.DRAW)) {
 					System.out.println("DRAW!");
 					System.exit(0);
 				}
 			}
-		} 
-		else 
-		{
-			//da modificare
-			client = new TablutRandomClient("BLACK", Integer.parseInt(args[1]));
-			
-			
+		} else {
+			// da modificare
+			client = new TablutRandomClient("BLACK", game);
+
 			System.out.println("You are player " + client.getPlayer().toString() + "!");
-			while (true) 
-			{
+			while (true) {
 				client.read();
 				System.out.println("Current state:");
 				System.out.println(client.getCurrentState().toString());
-				try 
-				{
+				try {
 					Thread.sleep(1000);
-				} 
-				catch (InterruptedException e) {}
-				//è il mio turno
-				if(client.getCurrentState().getTurn().equals(StateTablut.Turn.BLACK))
-				{
-					
+				} catch (InterruptedException e) {
+				}
+				// è il mio turno
+				if (client.getCurrentState().getTurn().equals(StateTablut.Turn.BLACK)) {
+
 					int[] buf;
-					for(int i=0; i<client.getCurrentState().getBoard().length; i++)
-					{
-						for(int j=0; j<client.getCurrentState().getBoard().length; j++)
-						{
-							if(client.getCurrentState().getPawn(i, j).equalsPawn(State.Pawn.BLACK.toString()))
-							{
+					for (int i = 0; i < client.getCurrentState().getBoard().length; i++) {
+						for (int j = 0; j < client.getCurrentState().getBoard().length; j++) {
+							if (client.getCurrentState().getPawn(i, j).equalsPawn(State.Pawn.BLACK.toString())) {
 								buf = new int[2];
-								buf[0]=i;
-								buf[1]=j;
+								buf[0] = i;
+								buf[1] = j;
 								pawns.add(buf);
 							}
-						}						
+						}
 					}
-					
+
 					int[] selected = null;
-					
-					boolean found=false;
-					while(!found)
-					{
-						selected=pawns.get(new Random().nextInt(pawns.size()-1));
-						found=client.getController().canMove(client.getCurrentState(), selected[0], selected[1]);
+
+					boolean found = false;
+					while (!found) {
+						selected = pawns.get(new Random().nextInt(pawns.size() - 1));
+						found = client.getController().canMove(client.getCurrentState(), selected[0], selected[1]);
 					}
-					System.out.println("Pedina scelta: "+client.getCurrentState().getBox(selected[0], selected[1]));
-										
-					String to = client.getController().chooseDestination(client.getCurrentState(), selected[0], selected[1]);
+					System.out.println("Pedina scelta: " + client.getCurrentState().getBox(selected[0], selected[1]));
+
+					String to = client.getController().chooseDestination(client.getCurrentState(), selected[0],
+							selected[1]);
 					String from = client.getCurrentState().getBox(selected[0], selected[1]);
-					
-					
+
 					Action a = new Action(from, to, State.Turn.WHITE);
-					
+
 					client.write(a);
 					pawns.clear();
 				}
-				
-				
-				if(client.getCurrentState().getTurn().equals(StateTablut.Turn.WHITE))
-				{
+
+				if (client.getCurrentState().getTurn().equals(StateTablut.Turn.WHITE)) {
 					System.out.println("Waiting for your opponent move... ");
 				}
-				if(client.getCurrentState().getTurn().equals(StateTablut.Turn.WHITEWIN))
-				{
+				if (client.getCurrentState().getTurn().equals(StateTablut.Turn.WHITEWIN)) {
 					System.out.println("YOU LOSE!");
 					System.exit(0);
 				}
-				if(client.getCurrentState().getTurn().equals(StateTablut.Turn.BLACKWIN))
-				{
+				if (client.getCurrentState().getTurn().equals(StateTablut.Turn.BLACKWIN)) {
 					System.out.println("YOU WIN!");
 					System.exit(0);
 				}
-				if(client.getCurrentState().getTurn().equals(StateTablut.Turn.DRAW))
-				{
+				if (client.getCurrentState().getTurn().equals(StateTablut.Turn.DRAW)) {
 					System.out.println("DRAW!");
 					System.exit(0);
 				}
 			}
 		}
 	}
-			
+
 }
-
-	
-
