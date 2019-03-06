@@ -25,6 +25,9 @@ public class GameTablut implements Game {
 	private FileHandler fh;
 	private Logger loggGame;
 	
+	public GameTablut() {
+		this(0);
+	}
 	
 	public GameTablut(int moves) {
 		super();
@@ -580,6 +583,7 @@ public class GameTablut implements Game {
 	public void setGameLog(File gameLog) {
 		this.gameLog = gameLog;
 	}
+
 	
 	
 }

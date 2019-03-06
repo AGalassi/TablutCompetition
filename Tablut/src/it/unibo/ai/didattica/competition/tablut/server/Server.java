@@ -6,6 +6,8 @@ import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Date;
 import java.util.logging.*;
 
@@ -52,7 +54,14 @@ public class Server {
 	 * Action chosen by a player
 	 */
 	private static Action move;
+	/**
+	 * Errors allowed
+	 */
 	private static int errors;
+	/**
+	 * Repeated positions allowed
+	 */
+	private static int repeated;
 
 	private ServerSocket socketWhite;
 	private ServerSocket socketBlack;
@@ -74,7 +83,7 @@ public class Server {
 	 */
 	private int gameC;
 
-	public Server(int timeout, int cacheSize, int numErrors, int game, boolean gui) {
+	public Server(int timeout, int cacheSize, int numErrors, int repeated, int game, boolean gui) {
 		this.gameC = game;
 		Server.enableGui = gui;
 		Server.time = timeout;
@@ -97,7 +106,7 @@ public class Server {
 		case 4:
 			state = new StateTablut();
 			state.setTurn(State.Turn.WHITE);
-			this.game = new GameAshtonTablut(moveCache);
+			this.game = new GameAshtonTablut(repeated, cacheSize);
 			break;
 		default:
 			System.out.println("Error in game selection");
@@ -112,97 +121,133 @@ public class Server {
 	}
 
 	/**
-	 * this is the main that is launched. It creates the engine that starts the
-	 * match
+	 * Server initialiazer.
 	 * 
 	 * @param args
 	 *            the time for the move, the size of the cache for monitoring
-	 *            draws, the number of errors allowed, the type of game
+	 *            draws, the number of errors allowed, the type of game, whether
+	 *            the GUI should be used or not
 	 * 
 	 */
 	public static void main(String[] args) {
 		time = 60;
-		moveCache = 100;
+		moveCache = -1;
+		repeated = 0;
 		errors = 0;
 		gameChosen = 4;
 		enableGui = true;
-		String usage = "Usage: java ENGINE <time> <cache> <errors> <game> <enableGUI>\n"
+
+		String usage = "Usage: java Server [-t <time>] [-c <cache>] [-e <errors>] [-s <repeatedState>] [-r <game rules>] [-g <enableGUI>]\n"
 				+ "\tenableGUI must be >0 for enabling it; default 1"
-				+ "\tgame must be an integer; 1 for Tablut, 2 for Modern, 3 for Brandub, 4 for Ashton; default: 4\n"
-				+ "\terrors must be an integer; default: 0\n" + "\tcache must be an integer; default: 100\n"
+				+ "\tgame rules must be an integer; 1 for Tablut, 2 for Modern, 3 for Brandub, 4 for Ashton; default: 4\n"
+				+ "\trepeatedStates must be an integer >= 0; default: 0\n"
+				+ "\terrors must be an integer >= 0; default: 0\n" + "\tcache must be an integer, negative value means infinite; default: infinite\n"
 				+ "time must be an integer (number of seconds); default: 60";
-		if (args.length > 0) {
-			try {
-				time = Integer.parseInt(args[0]);
-				if (time < 1) {
-					System.out.println("Time format not allowed!");
+		for (int i = 0; i < args.length - 1; i++) {
+
+			if (args[i].equals("-t")) {
+				i++;
+				try {
+					time = Integer.parseInt(args[i]);
+					if (time < 1) {
+						System.out.println("Time format not allowed!");
+						System.out.println(args[i]);
+						System.out.println(usage);
+						System.exit(1);
+					}
+				} catch (Exception e) {
+					System.out.println("The time format is not correct!");
+					System.out.println(args[i]);
 					System.out.println(usage);
 					System.exit(1);
 				}
-			} catch (Exception e) {
-				System.out.println("The time format is not correct!");
-				System.out.println(usage);
-				System.exit(1);
-			}
-		}
-		if (args.length > 1) {
-			try {
-				moveCache = Integer.parseInt(args[1]);
-				if (moveCache < 1) {
-					System.out.println("Move number is not correct!");
-					System.out.println(usage);
-					System.exit(1);
-				}
-			} catch (Exception e) {
-				System.out.println("Number format is not correct!");
-				System.out.println(usage);
-				System.exit(1);
-			}
-		}
-		if (args.length > 2) {
-			try {
-				errors = Integer.parseInt(args[2]);
-				if (errors < 0) {
-					System.out.println("Error format not allowed!");
-					System.out.println(usage);
-					System.exit(1);
-				}
-			} catch (Exception e) {
-				System.out.println("The error format is not correct!");
-				System.out.println(usage);
-				System.exit(1);
 			}
 
-		}
-		if (args.length > 3) {
-			try {
-				gameChosen = Integer.parseInt(args[3]);
-				if (gameChosen < 0 || gameChosen > 4) {
-					System.out.println("Game format not allowed!");
+			if (args[i].equals("-c")) {
+				i++;
+				try {
+					moveCache = Integer.parseInt(args[i]);
+				} catch (Exception e) {
+					System.out.println("Number format is not correct!");
+					System.out.println(args[i]);
 					System.out.println(usage);
 					System.exit(1);
 				}
-			} catch (Exception e) {
-				System.out.println("The game format is not correct!");
-				System.out.println(usage);
-				System.exit(1);
 			}
-		}
-		if (args.length > 4) {
-			try {
-				float gui = Float.parseFloat(args[4]);
-				if (gui <= 0) {
-					enableGui = false;
+
+			if (args[i].equals("-e")) {
+				i++;
+				try {
+					errors = Integer.parseInt(args[i]);
+					if (errors < 0) {
+						System.out.println("Error format not allowed!");
+						System.out.println(args[i]);
+						System.out.println(usage);
+						System.exit(1);
+					}
+				} catch (Exception e) {
+					System.out.println("The error format is not correct!");
+					System.out.println(args[i]);
+					System.out.println(usage);
+					System.exit(1);
 				}
-			} catch (Exception e) {
-				System.out.println("The enableGUI format is not correct!");
-				System.out.println(usage);
-				System.exit(1);
+
 			}
+			if (args[i].equals("-s")) {
+				i++;
+				try {
+					repeated = Integer.parseInt(args[i]);
+					if (repeated < 0) {
+						System.out.println("RepeatedStates format not allowed!");
+						System.out.println(args[i]);
+						System.out.println(usage);
+						System.exit(1);
+					}
+				} catch (Exception e) {
+					System.out.println("The RepeatedStates format is not correct!");
+					System.out.println(args[i]);
+					System.out.println(usage);
+					System.exit(1);
+				}
+
+			}
+			if (args[i].equals("-r")) {
+				i++;
+				try {
+					gameChosen = Integer.parseInt(args[i]);
+					if (gameChosen < 0 || gameChosen > 4) {
+						System.out.println("Game format not allowed!");
+						System.out.println(args[i]);
+						System.out.println(usage);
+						System.exit(1);
+					}
+				} catch (Exception e) {
+					System.out.println("The game format is not correct!");
+					System.out.println(args[i]);
+					System.out.println(usage);
+					System.exit(1);
+				}
+			}
+
+			if (args[i].equals("-g")) {
+				i++;
+				try {
+					int gui = Integer.parseInt(args[i]);
+					if (gui <= 0) {
+						enableGui = false;
+					}
+				} catch (Exception e) {
+					System.out.println("The enableGUI format is not correct!");
+					System.out.println(args[i]);
+					System.out.println(usage);
+					System.exit(1);
+				}
+			}
+
 		}
 
 		// Start the server
-		Server engine = new Server(time, moveCache, errors, gameChosen, enableGui);
+		Server engine = new Server(time, moveCache, errors, repeated, gameChosen, enableGui);
 		engine.run();
 	}
 
@@ -227,6 +272,7 @@ public class Server {
 			} catch (Exception e) {
 			}
 		}
+
 	}
 
 	/**
@@ -246,17 +292,17 @@ public class Server {
 		/**
 		 * Name of the systemlog
 		 */
-		File f = new File("LOGS");
+		String logs_folder = "logs";
+		Path p = Paths.get(logs_folder + File.separator + new Date().getTime() + "_systemLog.txt");
+		p=p.toAbsolutePath();
+		String sysLogName = p.toString();
 		Logger loggSys = Logger.getLogger("SysLog");
 		try {
-			// String sysLogName = (File.separatorChar + "LOGS" +
-			// File.separatorChar + new Date().getTime()+ "_systemLog.txt");
-			String sysLogName = (new Date().getTime() + "_systemLog.txt");
+			new File(logs_folder).mkdirs();
 			System.out.println(sysLogName);
 			File systemLog = new File(sysLogName);
 			if (!systemLog.exists()) {
-				f.mkdirs();
-				f.createNewFile();
+				systemLog.createNewFile();
 			}
 			FileHandler fh = null;
 			fh = new FileHandler(sysLogName, true);
@@ -420,7 +466,7 @@ public class Server {
 					this.blackErrors++;
 
 					if (this.blackErrors > errors) {
-						System.out.println("TOO MUCH ERRORS FOR BLACK PLAYER; PLAYER WHITE WIN!");
+						System.out.println("TOO MANY ERRORS FOR BLACK PLAYER; PLAYER WHITE WIN!");
 						e.printStackTrace();
 						loggSys.warning("Chiusura sistema per troppi errori giocatore nero");
 						System.exit(1);
