@@ -104,7 +104,7 @@ public abstract class State {
 	
 	public StateTablut clone() {
 		StateTablut result = new StateTablut();
-		result.setBoard(this.board);
+		result.setBoard(this.board.clone());
 		result.setTurn(this.turn);
 		return result;
 	}

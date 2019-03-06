@@ -456,6 +456,8 @@ public class Server {
 			// APPLY MOVE
 			// translate the string into an action object
 			move = this.gson.fromJson(theGson, Action.class);
+			loggSys.fine("Move received.\t" + move.toString());
+			System.out.println("Suggested move: " + move.toString()); 
 
 			try {
 				// aggiorna tutto e determina anche eventuali fine partita
@@ -477,7 +479,7 @@ public class Server {
 				if (state.getTurn().equalsTurn("W")) {
 					this.whiteErrors++;
 					if (this.whiteErrors > errors) {
-						System.out.println("TOO MUCH ERRORS FOR WHITE PLAYER; PLAYER BLACK WIN!");
+						System.out.println("TOO MANY ERRORS FOR WHITE PLAYER; PLAYER BLACK WIN!");
 						e.printStackTrace();
 						loggSys.warning("Chiusura sistema per troppi errori giocatore bianco");
 						System.exit(1);

@@ -285,14 +285,12 @@ public class GameAshtonTablut implements Game {
 			this.drawConditions.clear();
 		}
 
-		this.loggGame.fine("Stato:\n" + state.toString());
-
 		// controllo pareggio
 		int trovati = 0;
-		for (int i = 0; i < this.drawConditions.size(); i++) {
-			if (this.drawConditions.get(i).equals(state)) {
+		for (State s : drawConditions) {
+			
+			if (s.equals(state)) {
 				trovati++;
-
 				if (trovati > repeated_moves_allowed) {
 					state.setTurn(State.Turn.DRAW);
 					this.loggGame.fine("Partita terminata in pareggio per numero di stati ripetuti");
@@ -303,7 +301,11 @@ public class GameAshtonTablut implements Game {
 		if (cache_size >= 0 && this.drawConditions.size() > cache_size) {
 			this.drawConditions.remove(0);
 		}
-		this.drawConditions.add(state);
+		this.drawConditions.add(state.clone());
+		
+
+		this.loggGame.fine("Stato:\n" + state.toString());
+		System.out.println("Stato:\n" + state.toString());
 
 		return state;
 	}

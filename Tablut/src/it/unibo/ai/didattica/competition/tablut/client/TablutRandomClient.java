@@ -33,7 +33,7 @@ public class TablutRandomClient extends TablutClient {
 		}
 		System.out.println("Selected client: " + args[0]);
 
-		Game game = new GameTablut();
+		Game game = null;
 		State state;
 		switch (gametype) {
 		case 1:
@@ -128,21 +128,21 @@ public class TablutRandomClient extends TablutClient {
 
 				}
 				// è il turno dell'avversario
-				else if (client.getCurrentState().getTurn().equals(StateTablut.Turn.BLACK)) {
+				else if (state.getTurn().equals(StateTablut.Turn.BLACK)) {
 					System.out.println("Waiting for your opponent move... ");
 				}
 				// ho vinto
-				else if (client.getCurrentState().getTurn().equals(StateTablut.Turn.WHITEWIN)) {
+				else if (state.getTurn().equals(StateTablut.Turn.WHITEWIN)) {
 					System.out.println("YOU WIN!");
 					System.exit(0);
 				}
 				// ho perso
-				else if (client.getCurrentState().getTurn().equals(StateTablut.Turn.BLACKWIN)) {
+				else if (state.getTurn().equals(StateTablut.Turn.BLACKWIN)) {
 					System.out.println("YOU LOSE!");
 					System.exit(0);
 				}
 				// pareggio
-				else if (client.getCurrentState().getTurn().equals(StateTablut.Turn.DRAW)) {
+				else if (state.getTurn().equals(StateTablut.Turn.DRAW)) {
 					System.out.println("DRAW!");
 					System.exit(0);
 				}
@@ -211,18 +211,18 @@ public class TablutRandomClient extends TablutClient {
 
 				}
 
-				if (client.getCurrentState().getTurn().equals(StateTablut.Turn.WHITE)) {
+				else if (state.getTurn().equals(StateTablut.Turn.WHITE)) {
 					System.out.println("Waiting for your opponent move... ");
 				}
-				if (client.getCurrentState().getTurn().equals(StateTablut.Turn.WHITEWIN)) {
+				else if (state.getTurn().equals(StateTablut.Turn.WHITEWIN)) {
 					System.out.println("YOU LOSE!");
 					System.exit(0);
 				}
-				if (client.getCurrentState().getTurn().equals(StateTablut.Turn.BLACKWIN)) {
+				else if (state.getTurn().equals(StateTablut.Turn.BLACKWIN)) {
 					System.out.println("YOU WIN!");
 					System.exit(0);
 				}
-				if (client.getCurrentState().getTurn().equals(StateTablut.Turn.DRAW)) {
+				else if (state.getTurn().equals(StateTablut.Turn.DRAW)) {
 					System.out.println("DRAW!");
 					System.exit(0);
 				}
