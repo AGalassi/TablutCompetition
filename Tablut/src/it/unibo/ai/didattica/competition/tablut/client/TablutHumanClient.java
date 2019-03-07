@@ -63,21 +63,22 @@ public class TablutHumanClient extends TablutClient {
 						actionStringTo = in.readLine();
 						action = new Action(actionStringFrom, actionStringTo, this.getPlayer());
 						this.write(action);
-					}
-					if (this.getCurrentState().getTurn().equals(StateTablut.Turn.BLACK)) {
+					} else if (this.getCurrentState().getTurn().equals(StateTablut.Turn.BLACK)) {
 						System.out.println("Waiting for your opponent move... ");
-					}
-					if (this.getCurrentState().getTurn().equals(StateTablut.Turn.WHITEWIN)) {
+					} else if (this.getCurrentState().getTurn().equals(StateTablut.Turn.WHITEWIN)) {
 						System.out.println("YOU WIN!");
 						System.exit(0);
-					}
-					if (this.getCurrentState().getTurn().equals(StateTablut.Turn.BLACKWIN)) {
+					} else if (this.getCurrentState().getTurn().equals(StateTablut.Turn.BLACKWIN)) {
 						System.out.println("YOU LOSE!");
+						System.exit(0);
+					} else if (this.getCurrentState().getTurn().equals(StateTablut.Turn.DRAW)) {
+						System.out.println("DRAW!");
 						System.exit(0);
 					}
 
 				} catch (Exception e) {
 					e.printStackTrace();
+					System.exit(1);
 				}
 			}
 		} else {
@@ -95,20 +96,21 @@ public class TablutHumanClient extends TablutClient {
 						actionStringTo = in.readLine();
 						action = new Action(actionStringFrom, actionStringTo, this.getPlayer());
 						this.write(action);
-					}
-					if (this.getCurrentState().getTurn().equals(StateTablut.Turn.WHITE)) {
+					} else if (this.getCurrentState().getTurn().equals(StateTablut.Turn.WHITE)) {
 						System.out.println("Waiting for your opponent move... ");
-					}
-					if (this.getCurrentState().getTurn().equals(StateTablut.Turn.WHITEWIN)) {
+					} else if (this.getCurrentState().getTurn().equals(StateTablut.Turn.WHITEWIN)) {
 						System.out.println("YOU LOSE!");
 						System.exit(0);
-					}
-					if (this.getCurrentState().getTurn().equals(StateTablut.Turn.BLACKWIN)) {
+					} else if (this.getCurrentState().getTurn().equals(StateTablut.Turn.BLACKWIN)) {
 						System.out.println("YOU WIN!");
+						System.exit(0);
+					} else if (this.getCurrentState().getTurn().equals(StateTablut.Turn.DRAW)) {
+						System.out.println("DRAW!");
 						System.exit(0);
 					}
 				} catch (Exception e) {
 					e.printStackTrace();
+					System.exit(1);
 				}
 			}
 		}

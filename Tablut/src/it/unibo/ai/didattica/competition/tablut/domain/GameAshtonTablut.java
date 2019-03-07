@@ -44,11 +44,15 @@ public class GameAshtonTablut implements Game {
 	// private List<String> strangeCitadels;
 	private List<State> drawConditions;
 
-	
 	// TODO: Draw conditions are not working
-	
+
 	public GameAshtonTablut(int repeated_moves_allowed, int cache_size, String logs_folder, String whiteName,
 			String blackName) {
+		this(new StateTablut(), repeated_moves_allowed, cache_size, logs_folder, whiteName, blackName);
+	}
+
+	public GameAshtonTablut(State state, int repeated_moves_allowed, int cache_size, String logs_folder,
+			String whiteName, String blackName) {
 		super();
 		this.repeated_moves_allowed = repeated_moves_allowed;
 		this.cache_size = cache_size;
@@ -76,7 +80,10 @@ public class GameAshtonTablut implements Game {
 		loggGame.addHandler(this.fh);
 		this.fh.setFormatter(new SimpleFormatter());
 		loggGame.setLevel(Level.FINE);
+		loggGame.fine("Players:\tWhite:\t" + whiteName + "\tvs\t" + blackName);
+		loggGame.fine("Repeated moves allowed:\t" + repeated_moves_allowed + "\tCache:\t" + cache_size);
 		loggGame.fine("Inizio partita");
+		loggGame.fine("Stato:\n" + state.toString());
 		drawConditions = new ArrayList<State>();
 		this.citadels = new ArrayList<String>();
 		// this.strangeCitadels = new ArrayList<String>();
@@ -272,25 +279,45 @@ public class GameAshtonTablut implements Game {
 		// if something has been captured, clear cache for draws
 		if (this.movesWithutCapturing == 0) {
 			this.drawConditions.clear();
+			this.loggGame.fine("Capture! Draw cache cleared!");
 		}
 
 		// controllo pareggio
 		int trovati = 0;
 		for (State s : drawConditions) {
 
+			System.out.println(s.toString());
+
 			if (s.equals(state)) {
+				// DEBUG: //
+				// System.out.println("UGUALI:");
+				// System.out.println("STATO VECCHIO:\t" + s.toLinearString());
+				// System.out.println("STATO NUOVO:\t" +
+				// state.toLinearString());
+
 				trovati++;
 				if (trovati > repeated_moves_allowed) {
 					state.setTurn(State.Turn.DRAW);
 					this.loggGame.fine("Partita terminata in pareggio per numero di stati ripetuti");
 					break;
 				}
+			} else {
+				// DEBUG: //
+				// System.out.println("DIVERSI:");
+				// System.out.println("STATO VECCHIO:\t" + s.toLinearString());
+				// System.out.println("STATO NUOVO:\t" +
+				// state.toLinearString());
 			}
+		}
+		if (trovati > 0) {
+			this.loggGame.fine("Equal states found: " + trovati);
 		}
 		if (cache_size >= 0 && this.drawConditions.size() > cache_size) {
 			this.drawConditions.remove(0);
 		}
 		this.drawConditions.add(state.clone());
+
+		this.loggGame.fine("Current draw cache size: " + this.drawConditions.size());
 
 		this.loggGame.fine("Stato:\n" + state.toString());
 		System.out.println("Stato:\n" + state.toString());

@@ -433,15 +433,15 @@ public class Server implements Runnable {
 		case 4:
 			state = new StateTablut();
 			state.setTurn(State.Turn.WHITE);
-			this.game = new GameAshtonTablut(repeated, this.cacheSize, "logs", whiteName, blackName);
+			this.game = new GameAshtonTablut(state, repeated, this.cacheSize, "logs", whiteName, blackName);
 			break;
 		default:
 			System.out.println("Error in game selection");
 			System.exit(4);
 		}
-
-		this.initializeGUI(state);
-
+		if (this.enableGui) {
+			this.initializeGUI(state);
+		}
 		System.out.println("Clients connected..");
 
 		// SEND INITIAL STATE
@@ -460,7 +460,6 @@ public class Server implements Runnable {
 			loggSys.warning("Chiusura sistema");
 			System.exit(1);
 		}
-		
 
 		// GAME CYCLE
 		while (!endgame) {
@@ -582,6 +581,7 @@ public class Server implements Runnable {
 				endgame = true;
 			}
 		}
+		System.exit(0);
 	}
 
 }

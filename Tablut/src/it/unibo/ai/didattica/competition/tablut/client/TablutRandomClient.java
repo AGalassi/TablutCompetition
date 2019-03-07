@@ -107,6 +107,7 @@ public class TablutRandomClient extends TablutClient {
 			} catch (ClassNotFoundException | IOException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
+				System.exit(1);
 			}
 			System.out.println("Current state:");
 			state = this.getCurrentState();
