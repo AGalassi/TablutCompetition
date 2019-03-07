@@ -44,29 +44,18 @@ public class GameAshtonTablut implements Game {
 	// private List<String> strangeCitadels;
 	private List<State> drawConditions;
 
-	public GameAshtonTablut() {
-		this(0, -1, "logs");
-	}
-
-	public GameAshtonTablut(int repeated_moves_allowed) {
-		this(repeated_moves_allowed, -1, "logs");
-	}
-
-	public GameAshtonTablut(int repeated_moves_allowed, int cache_size) {
-		this(repeated_moves_allowed, cache_size, "logs");
-	}
-
-	public GameAshtonTablut(String logs_folder) {
-		this(0, -1, logs_folder);
-	}
-
-	public GameAshtonTablut(int repeated_moves_allowed, int cache_size, String logs_folder) {
+	
+	// TODO: Draw conditions are not working
+	
+	public GameAshtonTablut(int repeated_moves_allowed, int cache_size, String logs_folder, String whiteName,
+			String blackName) {
 		super();
 		this.repeated_moves_allowed = repeated_moves_allowed;
 		this.cache_size = cache_size;
 		this.movesWithutCapturing = 0;
 
-		Path p = Paths.get(logs_folder + File.separator + new Date().getTime() + "_gameLog.txt");
+		Path p = Paths.get(logs_folder + File.separator + "_" + whiteName + "_vs_" + blackName + "_"
+				+ new Date().getTime() + "_gameLog.txt");
 		p = p.toAbsolutePath();
 		this.gameLogName = p.toString();
 		File gamefile = new File(this.gameLogName);
@@ -288,7 +277,7 @@ public class GameAshtonTablut implements Game {
 		// controllo pareggio
 		int trovati = 0;
 		for (State s : drawConditions) {
-			
+
 			if (s.equals(state)) {
 				trovati++;
 				if (trovati > repeated_moves_allowed) {
@@ -302,7 +291,6 @@ public class GameAshtonTablut implements Game {
 			this.drawConditions.remove(0);
 		}
 		this.drawConditions.add(state.clone());
-		
 
 		this.loggGame.fine("Stato:\n" + state.toString());
 		System.out.println("Stato:\n" + state.toString());

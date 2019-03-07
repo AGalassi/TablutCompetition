@@ -23,45 +23,41 @@ import com.google.gson.Gson;
  * @author A.Piretti, Andrea Galassi
  *
  */
-public class Server {
+public class Server implements Runnable {
 
 	/**
 	 * State of the game
 	 */
-	private static State state;
+	private State state;
 	/**
 	 * Number of seconds allowed for a decision
 	 */
-	private static int time;
+	private int time;
 	/**
 	 * Number of states kept in memory for the detection of a draw
 	 */
-	private static int moveCache;
-	/**
-	 * Integer that represents the game type
-	 */
-	private static int gameChosen;
+	private int moveCache;
 	/**
 	 * Whether the gui must be enabled or not
 	 */
-	private static boolean enableGui;
+	private boolean enableGui;
 
 	/**
 	 * JSON string used to communicate
 	 */
-	private static String theGson;
+	private String theGson;
 	/**
 	 * Action chosen by a player
 	 */
-	private static Action move;
+	private Action move;
 	/**
 	 * Errors allowed
 	 */
-	private static int errors;
+	private int errors;
 	/**
 	 * Repeated positions allowed
 	 */
-	private static int repeated;
+	private int repeated;
 
 	private ServerSocket socketWhite;
 	private ServerSocket socketBlack;
@@ -75,6 +71,8 @@ public class Server {
 	 */
 	private int whiteErrors;
 
+	private int cacheSize;
+
 	private Game game;
 	private Gson gson;
 	private Gui theGui;
@@ -85,39 +83,18 @@ public class Server {
 
 	public Server(int timeout, int cacheSize, int numErrors, int repeated, int game, boolean gui) {
 		this.gameC = game;
-		Server.enableGui = gui;
-		Server.time = timeout;
-		Server.moveCache = cacheSize;
-		Server.errors = numErrors;
-
-		switch (this.gameC) {
-		case 1:
-			state = new StateTablut();
-			this.game = new GameTablut(moveCache);
-			break;
-		case 2:
-			state = new StateTablut();
-			this.game = new GameModernTablut(moveCache);
-			break;
-		case 3:
-			state = new StateBrandub();
-			this.game = new GameTablut(moveCache);
-			break;
-		case 4:
-			state = new StateTablut();
-			state.setTurn(State.Turn.WHITE);
-			this.game = new GameAshtonTablut(repeated, cacheSize);
-			break;
-		default:
-			System.out.println("Error in game selection");
-			System.exit(4);
-		}
+		this.enableGui = gui;
+		this.time = timeout;
+		this.moveCache = cacheSize;
+		this.errors = numErrors;
+		this.cacheSize = cacheSize;
+		this.enableGui = gui;
 		this.gson = new Gson();
-		if (enableGui) {
-			theGui = new Gui(this.gameC);
-			theGui.update(state);
-		}
+	}
 
+	public void initializeGUI(State state) {
+		this.theGui = new Gui(this.gameC);
+		this.theGui.update(state);
 	}
 
 	/**
@@ -130,18 +107,19 @@ public class Server {
 	 * 
 	 */
 	public static void main(String[] args) {
-		time = 60;
-		moveCache = -1;
-		repeated = 0;
-		errors = 0;
-		gameChosen = 4;
-		enableGui = true;
+		int time = 60;
+		int moveCache = -1;
+		int repeated = 0;
+		int errors = 0;
+		int gameChosen = 4;
+		boolean enableGui = true;
 
 		String usage = "Usage: java Server [-t <time>] [-c <cache>] [-e <errors>] [-s <repeatedState>] [-r <game rules>] [-g <enableGUI>]\n"
 				+ "\tenableGUI must be >0 for enabling it; default 1"
 				+ "\tgame rules must be an integer; 1 for Tablut, 2 for Modern, 3 for Brandub, 4 for Ashton; default: 4\n"
 				+ "\trepeatedStates must be an integer >= 0; default: 0\n"
-				+ "\terrors must be an integer >= 0; default: 0\n" + "\tcache must be an integer, negative value means infinite; default: infinite\n"
+				+ "\terrors must be an integer >= 0; default: 0\n"
+				+ "\tcache must be an integer, negative value means infinite; default: infinite\n"
 				+ "time must be an integer (number of seconds); default: 60";
 		for (int i = 0; i < args.length - 1; i++) {
 
@@ -272,7 +250,6 @@ public class Server {
 			} catch (Exception e) {
 			}
 		}
-
 	}
 
 	/**
@@ -294,7 +271,7 @@ public class Server {
 		 */
 		String logs_folder = "logs";
 		Path p = Paths.get(logs_folder + File.separator + new Date().getTime() + "_systemLog.txt");
-		p=p.toAbsolutePath();
+		p = p.toAbsolutePath();
 		String sysLogName = p.toString();
 		Logger loggSys = Logger.getLogger("SysLog");
 		try {
@@ -314,7 +291,8 @@ public class Server {
 			e.printStackTrace();
 			System.exit(1);
 		}
-		switch (gameC) {
+
+		switch (this.gameC) {
 		case 1:
 			loggSys.fine("Partita di ClassicTablut");
 			break;
@@ -354,7 +332,17 @@ public class Server {
 		DataOutputStream blackState = null;
 		System.out.println("Waiting for connections...");
 
-		// ESTABLISH CONNECTIONS
+		String whiteName = "WP";
+		String blackName = "BP";
+
+		/**
+		 * Socket of the current player
+		 */
+		TCPInput tin = null;
+		TCPInput Turnwhite = null;
+		TCPInput Turnblack = null;
+
+		// ESTABLISH CONNECTIONS AND NAME READING
 		try {
 			this.socketWhite = new ServerSocket(5800);
 			this.socketBlack = new ServerSocket(5801);
@@ -363,10 +351,64 @@ public class Server {
 			loggSys.fine("Accettata connessione con client giocatore Bianco");
 			whiteMove = new DataInputStream(white.getInputStream());
 			whiteState = new DataOutputStream(white.getOutputStream());
+			Turnwhite = new TCPInput(whiteMove);
+
+			// NAME READING
+			t = new Thread(Turnwhite);
+			t.start();
+			loggSys.fine("Lettura nome player bianco in corso..");
+			try {
+				// timer for the move
+				int counter = 0;
+				while (counter < time && t.isAlive()) {
+					Thread.sleep(1000);
+					counter++;
+				}
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+
+			// timeout for name declaration
+			if (t.isAlive()) {
+				System.out.println("Timeout!!!!");
+				loggSys.warning("Chiusura sistema per timeout");
+				System.exit(0);
+			}
+
+			whiteName = this.gson.fromJson(theGson, String.class);
+			System.out.println("White player name:\t" + whiteName);
+			loggSys.fine("White player name:\t" + whiteName);
+
 			black = this.socketBlack.accept();
 			loggSys.fine("Accettata connessione con client giocatore Nero");
 			blackMove = new DataInputStream(black.getInputStream());
 			blackState = new DataOutputStream(black.getOutputStream());
+			Turnblack = new TCPInput(blackMove);
+
+			// NAME READING
+			t = new Thread(Turnblack);
+			t.start();
+			loggSys.fine("Lettura nome player nero in corso..");
+			try {
+				// timer for the move
+				int counter = 0;
+				while (counter < time && t.isAlive()) {
+					Thread.sleep(1000);
+					counter++;
+				}
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			// timeout for name declaration
+			if (t.isAlive()) {
+				System.out.println("Timeout!!!!");
+				loggSys.warning("Chiusura sistema per timeout");
+				System.exit(0);
+			}
+
+			blackName = this.gson.fromJson(theGson, String.class);
+			System.out.println("Black player name:\t" + blackName);
+			loggSys.fine("Black player name:\t" + blackName);
 
 		} catch (IOException e) {
 			System.out.println("Socket error....");
@@ -375,15 +417,34 @@ public class Server {
 			System.exit(1);
 		}
 
+		switch (this.gameC) {
+		case 1:
+			state = new StateTablut();
+			this.game = new GameTablut(moveCache);
+			break;
+		case 2:
+			state = new StateTablut();
+			this.game = new GameModernTablut(moveCache);
+			break;
+		case 3:
+			state = new StateBrandub();
+			this.game = new GameTablut(moveCache);
+			break;
+		case 4:
+			state = new StateTablut();
+			state.setTurn(State.Turn.WHITE);
+			this.game = new GameAshtonTablut(repeated, this.cacheSize, "logs", whiteName, blackName);
+			break;
+		default:
+			System.out.println("Error in game selection");
+			System.exit(4);
+		}
+
+		this.initializeGUI(state);
+
 		System.out.println("Clients connected..");
 
 		// SEND INITIAL STATE
-		/**
-		 * Socket of the current player
-		 */
-		TCPInput tin = null;
-		TCPInput Turnwhite = new TCPInput(whiteMove);
-		TCPInput Turnblack = new TCPInput(blackMove);
 
 		try {
 			theGson = gson.toJson(state);
@@ -399,6 +460,7 @@ public class Server {
 			loggSys.warning("Chiusura sistema");
 			System.exit(1);
 		}
+		
 
 		// GAME CYCLE
 		while (!endgame) {
@@ -457,7 +519,7 @@ public class Server {
 			// translate the string into an action object
 			move = this.gson.fromJson(theGson, Action.class);
 			loggSys.fine("Move received.\t" + move.toString());
-			System.out.println("Suggested move: " + move.toString()); 
+			System.out.println("Suggested move: " + move.toString());
 
 			try {
 				// aggiorna tutto e determina anche eventuali fine partita

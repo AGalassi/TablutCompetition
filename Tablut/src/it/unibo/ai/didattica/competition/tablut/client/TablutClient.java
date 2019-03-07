@@ -19,9 +19,10 @@ import it.unibo.ai.didattica.competition.tablut.domain.StateTablut;
  * @author Andrea Piretti
  *
  */
-public abstract class TablutClient {
+public abstract class TablutClient implements Runnable {
 
 	private State.Turn player;
+	private String name;
 	private Socket playerSocket;
 	private DataInputStream in;
 	private DataOutputStream out;
@@ -46,11 +47,13 @@ public abstract class TablutClient {
 
 	/**
 	 * Creates a new player initializing the sockets and the logger
-	 * @param player The role of the player (black or white)
+	 * 
+	 * @param player
+	 *            The role of the player (black or white)
 	 * @throws UnknownHostException
 	 * @throws IOException
 	 */
-	public TablutClient(String player) throws UnknownHostException, IOException {
+	public TablutClient(String player, String name) throws UnknownHostException, IOException {
 		int port = 0;
 		this.gson = new Gson();
 		if (player.toLowerCase().equals("white")) {
@@ -65,6 +68,15 @@ public abstract class TablutClient {
 		playerSocket = new Socket("localhost", port);
 		out = new DataOutputStream(playerSocket.getOutputStream());
 		in = new DataInputStream(playerSocket.getInputStream());
+		this.name = name;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	/**
@@ -72,6 +84,13 @@ public abstract class TablutClient {
 	 */
 	public void write(Action action) throws IOException, ClassNotFoundException {
 		out.writeUTF(this.gson.toJson(action));
+	}
+	
+	/**
+	 * Write the name to the server
+	 */
+	public void declareName() throws IOException, ClassNotFoundException {
+		out.writeUTF(this.gson.toJson(this.name));
 	}
 
 	/**
