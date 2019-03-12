@@ -89,6 +89,7 @@ public class TablutRandomClient extends TablutClient {
 			state = new StateTablut();
 			state.setTurn(State.Turn.WHITE);
 			rules = new GameAshtonTablut(99, 0, "garbage", "fake", "fake");
+			System.out.println("Ashton Tablut game");
 			break;
 		default:
 			System.out.println("Error in game selection");

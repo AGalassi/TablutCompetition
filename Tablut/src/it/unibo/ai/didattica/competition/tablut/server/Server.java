@@ -376,6 +376,14 @@ public class Server implements Runnable {
 			}
 
 			whiteName = this.gson.fromJson(theGson, String.class);
+			// SECURITY STEP: dropping unproper characters
+			String temp = "";
+			for (int i = 0; i < whiteName.length(); i++) {
+				char c = whiteName.charAt(i);
+				if (Character.isAlphabetic(c) || Character.isDigit(c))
+					temp += c;
+			}
+			whiteName = temp;
 			System.out.println("White player name:\t" + whiteName);
 			loggSys.fine("White player name:\t" + whiteName);
 
@@ -407,6 +415,13 @@ public class Server implements Runnable {
 			}
 
 			blackName = this.gson.fromJson(theGson, String.class);
+			// SECURITY STEP: dropping unproper characters
+			temp = "";
+			for (int i = 0; i < blackName.length(); i++) {
+				char c = blackName.charAt(i);
+				if (Character.isAlphabetic(c) || Character.isDigit(c))
+					temp += c;
+			}
 			System.out.println("Black player name:\t" + blackName);
 			loggSys.fine("Black player name:\t" + blackName);
 
