@@ -378,7 +378,7 @@ public class Server implements Runnable {
 			whiteName = this.gson.fromJson(theGson, String.class);
 			// SECURITY STEP: dropping unproper characters
 			String temp = "";
-			for (int i = 0; i < whiteName.length(); i++) {
+			for (int i = 0; i < whiteName.length() && i < 10; i++) {
 				char c = whiteName.charAt(i);
 				if (Character.isAlphabetic(c) || Character.isDigit(c))
 					temp += c;
@@ -417,7 +417,7 @@ public class Server implements Runnable {
 			blackName = this.gson.fromJson(theGson, String.class);
 			// SECURITY STEP: dropping unproper characters
 			temp = "";
-			for (int i = 0; i < blackName.length(); i++) {
+			for (int i = 0; i < blackName.length() && i < 10; i++) {
 				char c = blackName.charAt(i);
 				if (Character.isAlphabetic(c) || Character.isDigit(c))
 					temp += c;
