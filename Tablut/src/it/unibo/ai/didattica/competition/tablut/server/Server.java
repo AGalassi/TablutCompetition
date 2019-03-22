@@ -88,7 +88,6 @@ public class Server implements Runnable {
 		this.moveCache = cacheSize;
 		this.errors = numErrors;
 		this.cacheSize = cacheSize;
-		this.enableGui = gui;
 		this.gson = new Gson();
 	}
 
