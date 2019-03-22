@@ -101,7 +101,7 @@ public class GameAshtonTablut implements Game {
 		this.citadels.add("h5");
 		this.citadels.add("d9");
 		this.citadels.add("e9");
-		this.citadels.add("f8");
+		this.citadels.add("f9");
 		this.citadels.add("e8");
 		// this.strangeCitadels.add("e1");
 		// this.strangeCitadels.add("a5");
