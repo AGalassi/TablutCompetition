@@ -1,0 +1,47 @@
+<!-- Le istruzioni su come usare ANT per eseguire il progetto, sono incluse nel file
+     di README, nella home del progetto -->
+
+<project name="Tablut">
+
+    <target name="clean">
+        <delete dir="build"/>
+    </target>
+
+    <target name="compile">
+        <mkdir dir="build"/>
+        <javac encoding="iso-8859-1" srcdir="src" 
+            destdir="build"
+            classpath="lib/gson-2.2.2.jar" />
+        <copy todir="build">
+            <fileset dir="src" excludes="*.java"/>
+        </copy>
+    </target>
+    
+    <target name="server">
+        <java classname="it.unibo.ai.didattica.competition.tablut.server.Server" fork="true">
+            <classpath>
+                <pathelement location="lib/gson-2.2.2.jar"/>
+                <pathelement location="build"/>
+            </classpath>
+        </java>
+    </target>
+    <target name="randomwhite">
+        <java classname="it.unibo.ai.didattica.competition.tablut.client.TablutRandomWhiteClient" fork="true">
+            <classpath>
+                <pathelement location="lib/gson-2.2.2.jar"/>
+                <pathelement location="build"/>
+            </classpath>
+        </java>
+    </target>
+    <target name="randomblack">
+        <java classname="it.unibo.ai.didattica.competition.tablut.client.TablutRandomBlackClient" fork="true">
+            <classpath>
+                <pathelement location="lib/gson-2.2.2.jar"/>
+                <pathelement location="build"/>
+            </classpath>
+        </java>
+    </target>
+
+
+
+</project>
