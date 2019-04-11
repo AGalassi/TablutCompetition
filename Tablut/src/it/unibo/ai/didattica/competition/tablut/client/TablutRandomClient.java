@@ -96,7 +96,6 @@ public class TablutRandomClient extends TablutClient {
 			System.exit(4);
 		}
 
-		TablutRandomClient client = null;
 		List<int[]> pawns = new ArrayList<int[]>();
 		List<int[]> empty = new ArrayList<int[]>();
 
