@@ -149,7 +149,12 @@ public class TablutRandomClient extends TablutClient {
 						e1.printStackTrace();
 					}
 					while (!found) {
-						selected = pawns.get(new Random().nextInt(pawns.size() - 1));
+						if (pawns.size() > 0) {
+							selected = pawns.get(new Random().nextInt(pawns.size() - 1));
+						} else {
+							selected = pawns.get(0);
+						}
+
 						String from = this.getCurrentState().getBox(selected[0], selected[1]);
 
 						selected = empty.get(new Random().nextInt(empty.size() - 1));
