@@ -44,7 +44,6 @@ public class GameAshtonTablut implements Game {
 	// private List<String> strangeCitadels;
 	private List<State> drawConditions;
 
-	// TODO: Draw conditions are not working
 
 	public GameAshtonTablut(int repeated_moves_allowed, int cache_size, String logs_folder, String whiteName,
 			String blackName) {
