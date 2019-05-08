@@ -3,7 +3,6 @@ package it.unibo.ai.didattica.competition.tablut.domain;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
-
 /**
  * Abstract class for a State of a game We have a representation of the board
  * and the turn
@@ -101,7 +100,7 @@ public abstract class State {
 
 		return result.toString();
 	}
-	
+
 	public String toLinearString() {
 		StringBuffer result = new StringBuffer();
 
@@ -220,6 +219,22 @@ public abstract class State {
 		result.setBoard(newboard);
 		result.setTurn(this.turn);
 		return result;
+	}
+
+	/**
+	 * Counts the number of checkers of a specific color on the board. Note: the king is not taken into account for white, it must be checked separately
+	 * @param color The color of the checker that will be counted. It is possible also to use EMPTY to count empty cells.
+	 * @return The number of cells of the board that contains a checker of that color.
+	 */
+	public int getNumberOf(Pawn color) {
+		int count = 0;
+		for (int i = 0; i < board.length; i++) {
+			for (int j = 0; j < board[i].length; j++) {
+				if (board[i][j] == color)
+					count++;
+			}
+		}
+		return count;
 	}
 
 }
