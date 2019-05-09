@@ -44,7 +44,6 @@ public class GameAshtonTablut implements Game {
 	// private List<String> strangeCitadels;
 	private List<State> drawConditions;
 
-
 	public GameAshtonTablut(int repeated_moves_allowed, int cache_size, String logs_folder, String whiteName,
 			String blackName) {
 		this(new StateTablut(), repeated_moves_allowed, cache_size, logs_folder, whiteName, blackName);
@@ -331,7 +330,11 @@ public class GameAshtonTablut implements Game {
 				&& (state.getPawn(a.getRowTo(), a.getColumnTo() + 2).equalsPawn("W")
 						|| state.getPawn(a.getRowTo(), a.getColumnTo() + 2).equalsPawn("T")
 						|| state.getPawn(a.getRowTo(), a.getColumnTo() + 2).equalsPawn("K")
-						|| (this.citadels.contains(state.getBox(a.getRowTo(), a.getColumnTo() + 2)) &&!(a.getColumnTo()+2==8&&a.getRowTo()==4)&&!(a.getColumnTo()+2==4&&a.getRowTo()==0)&&!(a.getColumnTo()+2==4&&a.getRowTo()==8)&&!(a.getColumnTo()+2==0&&a.getRowTo()==4)))) {
+						|| (this.citadels.contains(state.getBox(a.getRowTo(), a.getColumnTo() + 2))
+								&& !(a.getColumnTo() + 2 == 8 && a.getRowTo() == 4)
+								&& !(a.getColumnTo() + 2 == 4 && a.getRowTo() == 0)
+								&& !(a.getColumnTo() + 2 == 4 && a.getRowTo() == 8)
+								&& !(a.getColumnTo() + 2 == 0 && a.getRowTo() == 4)))) {
 			state.removePawn(a.getRowTo(), a.getColumnTo() + 1);
 			this.movesWithutCapturing = -1;
 			this.loggGame.fine("Pedina nera rimossa in: " + state.getBox(a.getRowTo(), a.getColumnTo() + 1));
@@ -341,7 +344,11 @@ public class GameAshtonTablut implements Game {
 				&& (state.getPawn(a.getRowTo(), a.getColumnTo() - 2).equalsPawn("W")
 						|| state.getPawn(a.getRowTo(), a.getColumnTo() - 2).equalsPawn("T")
 						|| state.getPawn(a.getRowTo(), a.getColumnTo() - 2).equalsPawn("K")
-						|| (this.citadels.contains(state.getBox(a.getRowTo(), a.getColumnTo() - 2)) &&!(a.getColumnTo()-2==8&&a.getRowTo()==4)&&!(a.getColumnTo()-2==4&&a.getRowTo()==0)&&!(a.getColumnTo()-2==4&&a.getRowTo()==8)&&!(a.getColumnTo()-2==0&&a.getRowTo()==4)))) {
+						|| (this.citadels.contains(state.getBox(a.getRowTo(), a.getColumnTo() - 2))
+								&& !(a.getColumnTo() - 2 == 8 && a.getRowTo() == 4)
+								&& !(a.getColumnTo() - 2 == 4 && a.getRowTo() == 0)
+								&& !(a.getColumnTo() - 2 == 4 && a.getRowTo() == 8)
+								&& !(a.getColumnTo() - 2 == 0 && a.getRowTo() == 4)))) {
 			state.removePawn(a.getRowTo(), a.getColumnTo() - 1);
 			this.movesWithutCapturing = -1;
 			this.loggGame.fine("Pedina nera rimossa in: " + state.getBox(a.getRowTo(), a.getColumnTo() - 1));
@@ -351,7 +358,11 @@ public class GameAshtonTablut implements Game {
 				&& (state.getPawn(a.getRowTo() - 2, a.getColumnTo()).equalsPawn("W")
 						|| state.getPawn(a.getRowTo() - 2, a.getColumnTo()).equalsPawn("T")
 						|| state.getPawn(a.getRowTo() - 2, a.getColumnTo()).equalsPawn("K")
-						|| (this.citadels.contains(state.getBox(a.getRowTo() - 2, a.getColumnTo()))&&!(a.getColumnTo()==8&&a.getRowTo()-2==4)&&!(a.getColumnTo()==4&&a.getRowTo()-2==0)&&!(a.getColumnTo()==4&&a.getRowTo()-2==8)&&!(a.getColumnTo()==0&&a.getRowTo()-2==4)) )) {
+						|| (this.citadels.contains(state.getBox(a.getRowTo() - 2, a.getColumnTo()))
+								&& !(a.getColumnTo() == 8 && a.getRowTo() - 2 == 4)
+								&& !(a.getColumnTo() == 4 && a.getRowTo() - 2 == 0)
+								&& !(a.getColumnTo() == 4 && a.getRowTo() - 2 == 8)
+								&& !(a.getColumnTo() == 0 && a.getRowTo() - 2 == 4)))) {
 			state.removePawn(a.getRowTo() - 1, a.getColumnTo());
 			this.movesWithutCapturing = -1;
 			this.loggGame.fine("Pedina nera rimossa in: " + state.getBox(a.getRowTo() - 1, a.getColumnTo()));
@@ -362,7 +373,11 @@ public class GameAshtonTablut implements Game {
 				&& (state.getPawn(a.getRowTo() + 2, a.getColumnTo()).equalsPawn("W")
 						|| state.getPawn(a.getRowTo() + 2, a.getColumnTo()).equalsPawn("T")
 						|| state.getPawn(a.getRowTo() + 2, a.getColumnTo()).equalsPawn("K")
-						|| (this.citadels.contains(state.getBox(a.getRowTo() + 2, a.getColumnTo()))&&!(a.getColumnTo()==8&&a.getRowTo()+2==4)&&!(a.getColumnTo()==4&&a.getRowTo()+2==0)&&!(a.getColumnTo()==4&&a.getRowTo()+2==8)&&!(a.getColumnTo()==0&&a.getRowTo()+2==4)))) {
+						|| (this.citadels.contains(state.getBox(a.getRowTo() + 2, a.getColumnTo()))
+								&& !(a.getColumnTo() == 8 && a.getRowTo() + 2 == 4)
+								&& !(a.getColumnTo() == 4 && a.getRowTo() + 2 == 0)
+								&& !(a.getColumnTo() == 4 && a.getRowTo() + 2 == 8)
+								&& !(a.getColumnTo() == 0 && a.getRowTo() + 2 == 4)))) {
 			state.removePawn(a.getRowTo() + 1, a.getColumnTo());
 			this.movesWithutCapturing = -1;
 			this.loggGame.fine("Pedina nera rimossa in: " + state.getBox(a.getRowTo() + 1, a.getColumnTo()));
@@ -375,337 +390,291 @@ public class GameAshtonTablut implements Game {
 				this.loggGame.fine("Bianco vince con re in " + a.getTo());
 			}
 		}
-		// TODO: implement the winning condition of the capture of the last black checker
+		// TODO: implement the winning condition of the capture of the last
+		// black checker
 
 		this.movesWithutCapturing++;
 		return state;
 	}
 
-	private State checkCaptureBlackKingLeft(State state, Action a){
-		//ho il re sulla sinistra
-		if (a.getColumnTo()>1&&state.getPawn(a.getRowTo(), a.getColumnTo()-1).equalsPawn("K"))
-		{
-			//re sul trono
-			if(state.getBox(a.getRowTo(), a.getColumnTo()-1).equals("e5"))
-			{
-				if(state.getPawn(3, 4).equalsPawn("B")
-						&& state.getPawn(4, 3).equalsPawn("B")
-						&& state.getPawn(5, 4).equalsPawn("B"))
-				{
+	private State checkCaptureBlackKingLeft(State state, Action a) {
+		// ho il re sulla sinistra
+		if (a.getColumnTo() > 1 && state.getPawn(a.getRowTo(), a.getColumnTo() - 1).equalsPawn("K")) {
+			// re sul trono
+			if (state.getBox(a.getRowTo(), a.getColumnTo() - 1).equals("e5")) {
+				if (state.getPawn(3, 4).equalsPawn("B") && state.getPawn(4, 3).equalsPawn("B")
+						&& state.getPawn(5, 4).equalsPawn("B")) {
 					state.setTurn(State.Turn.BLACKWIN);
-					this.loggGame.fine("Nero vince con re catturato in: " + state.getBox(a.getRowTo(), a.getColumnTo() - 1));
+					this.loggGame
+							.fine("Nero vince con re catturato in: " + state.getBox(a.getRowTo(), a.getColumnTo() - 1));
 				}
 			}
-			//re adiacente al trono
-			if(state.getBox(a.getRowTo(), a.getColumnTo()-1).equals("e4"))
-			{
-				if(state.getPawn(2, 4).equalsPawn("B")
-						&& state.getPawn(3, 3).equalsPawn("B"))
-				{
+			// re adiacente al trono
+			if (state.getBox(a.getRowTo(), a.getColumnTo() - 1).equals("e4")) {
+				if (state.getPawn(2, 4).equalsPawn("B") && state.getPawn(3, 3).equalsPawn("B")) {
 					state.setTurn(State.Turn.BLACKWIN);
-					this.loggGame.fine("Nero vince con re catturato in: " + state.getBox(a.getRowTo(), a.getColumnTo() - 1));
+					this.loggGame
+							.fine("Nero vince con re catturato in: " + state.getBox(a.getRowTo(), a.getColumnTo() - 1));
 				}
 			}
-			if(state.getBox(a.getRowTo(), a.getColumnTo()-1).equals("e6"))
-			{
-				if(state.getPawn(5, 3).equalsPawn("B")
-						&& state.getPawn(6, 4).equalsPawn("B"))
-				{
+			if (state.getBox(a.getRowTo(), a.getColumnTo() - 1).equals("f5")) {
+				if (state.getPawn(5, 5).equalsPawn("B") && state.getPawn(3, 5).equalsPawn("B")) {
 					state.setTurn(State.Turn.BLACKWIN);
-					this.loggGame.fine("Nero vince con re catturato in: " + state.getBox(a.getRowTo(), a.getColumnTo() - 1));
+					this.loggGame
+							.fine("Nero vince con re catturato in: " + state.getBox(a.getRowTo(), a.getColumnTo() - 1));
 				}
 			}
-			if(state.getBox(a.getRowTo(), a.getColumnTo()-1).equals("f5"))
-			{
-				if(state.getPawn(3, 5).equalsPawn("B")
-						&& state.getPawn(5, 5).equalsPawn("B"))
-				{
+			if (state.getBox(a.getRowTo(), a.getColumnTo() - 1).equals("e6")) {
+				if (state.getPawn(6, 4).equalsPawn("B") && state.getPawn(5, 3).equalsPawn("B")) {
 					state.setTurn(State.Turn.BLACKWIN);
-					this.loggGame.fine("Nero vince con re catturato in: " + state.getBox(a.getRowTo(), a.getColumnTo() - 1));
+					this.loggGame
+							.fine("Nero vince con re catturato in: " + state.getBox(a.getRowTo(), a.getColumnTo() - 1));
 				}
 			}
-			//sono fuori dalle zone del trono
-			if(!state.getBox(a.getRowTo(), a.getColumnTo()-1).equals("e5")
-					&& !state.getBox(a.getRowTo(), a.getColumnTo()-1).equals("e6")
-					&& !state.getBox(a.getRowTo(), a.getColumnTo()-1).equals("e4")
-					&& !state.getBox(a.getRowTo(), a.getColumnTo()-1).equals("f5"))
-			{
-				if(state.getPawn(a.getRowTo(), a.getColumnTo() - 2).equalsPawn("B")
-						|| this.citadels.contains(state.getBox(a.getRowTo(), a.getColumnTo()-2)))
-				{
+			// sono fuori dalle zone del trono
+			if (!state.getBox(a.getRowTo(), a.getColumnTo() - 1).equals("e5")
+					&& !state.getBox(a.getRowTo(), a.getColumnTo() - 1).equals("e6")
+					&& !state.getBox(a.getRowTo(), a.getColumnTo() - 1).equals("e4")
+					&& !state.getBox(a.getRowTo(), a.getColumnTo() - 1).equals("f5")) {
+				if (state.getPawn(a.getRowTo(), a.getColumnTo() - 2).equalsPawn("B")
+						|| this.citadels.contains(state.getBox(a.getRowTo(), a.getColumnTo() - 2))) {
 					state.setTurn(State.Turn.BLACKWIN);
-					this.loggGame.fine("Nero vince con re catturato in: " + state.getBox(a.getRowTo(), a.getColumnTo() - 1));
-				}					
-			}
-		}		
-		return state;
-	}
-	
-	private State checkCaptureBlackKingRight(State state, Action a){
-		//ho il re sulla destra
-		if (a.getColumnTo()<state.getBoard().length-2&&(state.getPawn(a.getRowTo(),a.getColumnTo()+1).equalsPawn("K")))				
-		{
-			//re sul trono
-			if(state.getBox(a.getRowTo(), a.getColumnTo()+1).equals("e5"))
-			{
-				if(state.getPawn(3, 4).equalsPawn("B")
-						&& state.getPawn(4, 5).equalsPawn("B")
-						&& state.getPawn(5, 4).equalsPawn("B"))
-				{
-					state.setTurn(State.Turn.BLACKWIN);
-					this.loggGame.fine("Nero vince con re catturato in: " + state.getBox(a.getRowTo(), a.getColumnTo() + 1));
+					this.loggGame
+							.fine("Nero vince con re catturato in: " + state.getBox(a.getRowTo(), a.getColumnTo() - 1));
 				}
-			}
-			//re adiacente al trono
-			if(state.getBox(a.getRowTo(), a.getColumnTo()+1).equals("e4"))
-			{
-				if(state.getPawn(2, 4).equalsPawn("B")
-						&& state.getPawn(3, 5).equalsPawn("B"))
-				{
-					state.setTurn(State.Turn.BLACKWIN);
-					this.loggGame.fine("Nero vince con re catturato in: " + state.getBox(a.getRowTo(), a.getColumnTo() + 1));
-				}
-			}
-			if(state.getBox(a.getRowTo(), a.getColumnTo()+1).equals("e6"))
-			{
-				if(state.getPawn(5, 5).equalsPawn("B")
-						&& state.getPawn(6, 4).equalsPawn("B"))
-				{
-					state.setTurn(State.Turn.BLACKWIN);
-					this.loggGame.fine("Nero vince con re catturato in: " + state.getBox(a.getRowTo(), a.getColumnTo() + 1));
-				}
-			}
-			if(state.getBox(a.getRowTo(), a.getColumnTo()+1).equals("d5"))
-			{
-				if(state.getPawn(3, 3).equalsPawn("B")
-						&& state.getPawn(3, 5).equalsPawn("B"))
-				{
-					state.setTurn(State.Turn.BLACKWIN);
-					this.loggGame.fine("Nero vince con re catturato in: " + state.getBox(a.getRowTo(), a.getColumnTo() + 1));
-				}
-			}
-			//sono fuori dalle zone del trono
-			if(!state.getBox(a.getRowTo(), a.getColumnTo()+1).equals("d5")
-					&& !state.getBox(a.getRowTo(), a.getColumnTo()+1).equals("e6")
-					&& !state.getBox(a.getRowTo(), a.getColumnTo()+1).equals("e4")
-					&& !state.getBox(a.getRowTo(), a.getColumnTo()+1).equals("e5"))
-			{
-				if(state.getPawn(a.getRowTo(), a.getColumnTo() + 2).equalsPawn("B")
-						|| this.citadels.contains(state.getBox(a.getRowTo(), a.getColumnTo()+2)))
-				{
-					state.setTurn(State.Turn.BLACKWIN);
-					this.loggGame.fine("Nero vince con re catturato in: " + state.getBox(a.getRowTo(), a.getColumnTo() + 1));
-				}					
 			}
 		}
 		return state;
 	}
-	
-	private State checkCaptureBlackKingDown(State state, Action a){
-		//ho il re sotto
-		if (a.getRowTo()<state.getBoard().length-2&&state.getPawn(a.getRowTo()+1,a.getColumnTo()).equalsPawn("K"))
-		{
+
+	private State checkCaptureBlackKingRight(State state, Action a) {
+		// ho il re sulla destra
+		if (a.getColumnTo() < state.getBoard().length - 2
+				&& (state.getPawn(a.getRowTo(), a.getColumnTo() + 1).equalsPawn("K"))) {
+			// re sul trono
+			if (state.getBox(a.getRowTo(), a.getColumnTo() + 1).equals("e5")) {
+				if (state.getPawn(3, 4).equalsPawn("B") && state.getPawn(4, 5).equalsPawn("B")
+						&& state.getPawn(5, 4).equalsPawn("B")) {
+					state.setTurn(State.Turn.BLACKWIN);
+					this.loggGame
+							.fine("Nero vince con re catturato in: " + state.getBox(a.getRowTo(), a.getColumnTo() + 1));
+				}
+			}
+			// re adiacente al trono
+			if (state.getBox(a.getRowTo(), a.getColumnTo() + 1).equals("e4")) {
+				if (state.getPawn(2, 4).equalsPawn("B") && state.getPawn(3, 5).equalsPawn("B")) {
+					state.setTurn(State.Turn.BLACKWIN);
+					this.loggGame
+							.fine("Nero vince con re catturato in: " + state.getBox(a.getRowTo(), a.getColumnTo() + 1));
+				}
+			}
+			if (state.getBox(a.getRowTo(), a.getColumnTo() + 1).equals("e6")) {
+				if (state.getPawn(5, 5).equalsPawn("B") && state.getPawn(6, 4).equalsPawn("B")) {
+					state.setTurn(State.Turn.BLACKWIN);
+					this.loggGame
+							.fine("Nero vince con re catturato in: " + state.getBox(a.getRowTo(), a.getColumnTo() + 1));
+				}
+			}
+			if (state.getBox(a.getRowTo(), a.getColumnTo() + 1).equals("d5")) {
+				if (state.getPawn(3, 3).equalsPawn("B") && state.getPawn(5, 3).equalsPawn("B")) {
+					state.setTurn(State.Turn.BLACKWIN);
+					this.loggGame
+							.fine("Nero vince con re catturato in: " + state.getBox(a.getRowTo(), a.getColumnTo() + 1));
+				}
+			}
+			// sono fuori dalle zone del trono
+			if (!state.getBox(a.getRowTo(), a.getColumnTo() + 1).equals("d5")
+					&& !state.getBox(a.getRowTo(), a.getColumnTo() + 1).equals("e6")
+					&& !state.getBox(a.getRowTo(), a.getColumnTo() + 1).equals("e4")
+					&& !state.getBox(a.getRowTo(), a.getColumnTo() + 1).equals("e5")) {
+				if (state.getPawn(a.getRowTo(), a.getColumnTo() + 2).equalsPawn("B")
+						|| this.citadels.contains(state.getBox(a.getRowTo(), a.getColumnTo() + 2))) {
+					state.setTurn(State.Turn.BLACKWIN);
+					this.loggGame
+							.fine("Nero vince con re catturato in: " + state.getBox(a.getRowTo(), a.getColumnTo() + 1));
+				}
+			}
+		}
+		return state;
+	}
+
+	private State checkCaptureBlackKingDown(State state, Action a) {
+		// ho il re sotto
+		if (a.getRowTo() < state.getBoard().length - 2
+				&& state.getPawn(a.getRowTo() + 1, a.getColumnTo()).equalsPawn("K")) {
 			System.out.println("Ho il re sotto");
-			//re sul trono
-			if(state.getBox(a.getRowTo()+1, a.getColumnTo()).equals("e5"))
-			{
-				if(state.getPawn(5, 4).equalsPawn("B")
-						&& state.getPawn(4, 5).equalsPawn("B")
-						&& state.getPawn(4, 3).equalsPawn("B"))
-				{
+			// re sul trono
+			if (state.getBox(a.getRowTo() + 1, a.getColumnTo()).equals("e5")) {
+				if (state.getPawn(5, 4).equalsPawn("B") && state.getPawn(4, 5).equalsPawn("B")
+						&& state.getPawn(4, 3).equalsPawn("B")) {
 					state.setTurn(State.Turn.BLACKWIN);
-					this.loggGame.fine("Nero vince con re catturato in: " + state.getBox(a.getRowTo()+1, a.getColumnTo()));
+					this.loggGame
+							.fine("Nero vince con re catturato in: " + state.getBox(a.getRowTo() + 1, a.getColumnTo()));
 				}
 			}
-			//re adiacente al trono
-			if(state.getBox(a.getRowTo()+1, a.getColumnTo()).equals("e4"))
-			{
-				if(state.getPawn(3, 3).equalsPawn("B")
-						&& state.getPawn(3, 5).equalsPawn("B"))
-				{
+			// re adiacente al trono
+			if (state.getBox(a.getRowTo() + 1, a.getColumnTo()).equals("e4")) {
+				if (state.getPawn(3, 3).equalsPawn("B") && state.getPawn(3, 5).equalsPawn("B")) {
 					state.setTurn(State.Turn.BLACKWIN);
-					this.loggGame.fine("Nero vince con re catturato in: " + state.getBox(a.getRowTo()+1, a.getColumnTo()));
+					this.loggGame
+							.fine("Nero vince con re catturato in: " + state.getBox(a.getRowTo() + 1, a.getColumnTo()));
 				}
 			}
-			if(state.getBox(a.getRowTo()+1, a.getColumnTo()).equals("d5"))
-			{
-				if(state.getPawn(4, 2).equalsPawn("B")
-						&& state.getPawn(5, 3).equalsPawn("B"))
-				{
+			if (state.getBox(a.getRowTo() + 1, a.getColumnTo()).equals("d5")) {
+				if (state.getPawn(4, 2).equalsPawn("B") && state.getPawn(5, 3).equalsPawn("B")) {
 					state.setTurn(State.Turn.BLACKWIN);
-					this.loggGame.fine("Nero vince con re catturato in: " + state.getBox(a.getRowTo()+1, a.getColumnTo()));
+					this.loggGame
+							.fine("Nero vince con re catturato in: " + state.getBox(a.getRowTo() + 1, a.getColumnTo()));
 				}
 			}
-			if(state.getBox(a.getRowTo()+1, a.getColumnTo()).equals("f5"))
-			{
-				if(state.getPawn(4, 6).equalsPawn("B")
-						&& state.getPawn(5, 5).equalsPawn("B"))
-				{
+			if (state.getBox(a.getRowTo() + 1, a.getColumnTo()).equals("f5")) {
+				if (state.getPawn(4, 6).equalsPawn("B") && state.getPawn(5, 5).equalsPawn("B")) {
 					state.setTurn(State.Turn.BLACKWIN);
-					this.loggGame.fine("Nero vince con re catturato in: " + state.getBox(a.getRowTo()+1, a.getColumnTo()));
+					this.loggGame
+							.fine("Nero vince con re catturato in: " + state.getBox(a.getRowTo() + 1, a.getColumnTo()));
 				}
 			}
-			//sono fuori dalle zone del trono
-			if(!state.getBox(a.getRowTo()+1, a.getColumnTo()).equals("d5")
-					&& !state.getBox(a.getRowTo()+1, a.getColumnTo()).equals("e4")
-					&& !state.getBox(a.getRowTo()+1, a.getColumnTo()).equals("f5")
-					&& !state.getBox(a.getRowTo()+1, a.getColumnTo()).equals("e5"))
-			{
-				if(state.getPawn(a.getRowTo()+2, a.getColumnTo()).equalsPawn("B")
-						|| this.citadels.contains(state.getBox(a.getRowTo()+2, a.getColumnTo())))
-				{
+			// sono fuori dalle zone del trono
+			if (!state.getBox(a.getRowTo() + 1, a.getColumnTo()).equals("d5")
+					&& !state.getBox(a.getRowTo() + 1, a.getColumnTo()).equals("e4")
+					&& !state.getBox(a.getRowTo() + 1, a.getColumnTo()).equals("f5")
+					&& !state.getBox(a.getRowTo() + 1, a.getColumnTo()).equals("e5")) {
+				if (state.getPawn(a.getRowTo() + 2, a.getColumnTo()).equalsPawn("B")
+						|| this.citadels.contains(state.getBox(a.getRowTo() + 2, a.getColumnTo()))) {
 					state.setTurn(State.Turn.BLACKWIN);
-					this.loggGame.fine("Nero vince con re catturato in: " + state.getBox(a.getRowTo()+1, a.getColumnTo()));
-				}					
-			}			
-		}		
-		return state;
-	}
-	
-	private State checkCaptureBlackKingUp(State state, Action a){
-		//ho il re sopra
-		if (a.getRowTo()>1&&state.getPawn(a.getRowTo()-1, a.getColumnTo()).equalsPawn("K"))
-		{
-			//re sul trono
-			if(state.getBox(a.getRowTo()-1, a.getColumnTo()).equals("e5"))
-			{
-				if(state.getPawn(3, 4).equalsPawn("B")
-						&& state.getPawn(4, 5).equalsPawn("B")
-						&& state.getPawn(4, 3).equalsPawn("B"))
-				{
-					state.setTurn(State.Turn.BLACKWIN);
-					this.loggGame.fine("Nero vince con re catturato in: " + state.getBox(a.getRowTo()-1, a.getColumnTo()));
+					this.loggGame
+							.fine("Nero vince con re catturato in: " + state.getBox(a.getRowTo() + 1, a.getColumnTo()));
 				}
 			}
-			//re adiacente al trono
-			if(state.getBox(a.getRowTo()-1, a.getColumnTo()).equals("e6"))
-			{
-				if(state.getPawn(5, 3).equalsPawn("B")
-						&& state.getPawn(5, 5).equalsPawn("B"))
-				{
-					state.setTurn(State.Turn.BLACKWIN);
-					this.loggGame.fine("Nero vince con re catturato in: " + state.getBox(a.getRowTo()-1, a.getColumnTo()));
-				}
-			}
-			if(state.getBox(a.getRowTo()-1, a.getColumnTo()).equals("d5"))
-			{
-				if(state.getPawn(4, 2).equalsPawn("B")
-						&& state.getPawn(3, 3).equalsPawn("B"))
-				{
-					state.setTurn(State.Turn.BLACKWIN);
-					this.loggGame.fine("Nero vince con re catturato in: " + state.getBox(a.getRowTo()-1, a.getColumnTo()));
-				}
-			}
-			if(state.getBox(a.getRowTo()-1, a.getColumnTo()).equals("f5"))
-			{
-				if(state.getPawn(4, 4).equalsPawn("B")
-						&& state.getPawn(3, 5).equalsPawn("B"))
-				{
-					state.setTurn(State.Turn.BLACKWIN);
-					this.loggGame.fine("Nero vince con re catturato in: " + state.getBox(a.getRowTo()-1, a.getColumnTo()));
-				}
-			}
-			//sono fuori dalle zone del trono
-			if(!state.getBox(a.getRowTo()-1, a.getColumnTo()).equals("d5")
-					&& !state.getBox(a.getRowTo()-1, a.getColumnTo()).equals("e4")
-					&& !state.getBox(a.getRowTo()-1, a.getColumnTo()).equals("f5")
-					&& !state.getBox(a.getRowTo()-1, a.getColumnTo()).equals("e5"))
-			{
-				if(state.getPawn(a.getRowTo()-2, a.getColumnTo()).equalsPawn("B")
-						|| this.citadels.contains(state.getBox(a.getRowTo()-2, a.getColumnTo())))
-				{
-					state.setTurn(State.Turn.BLACKWIN);
-					this.loggGame.fine("Nero vince con re catturato in: " + state.getBox(a.getRowTo()-1, a.getColumnTo()));
-				}					
-			}	
 		}
 		return state;
 	}
-	
-	private State checkCaptureBlackPawnRight(State state, Action a)	{
-		//mangio a destra
-		if (a.getColumnTo() < state.getBoard().length - 2 && state.getPawn(a.getRowTo(), a.getColumnTo() + 1).equalsPawn("W"))
-		{
-			if(state.getPawn(a.getRowTo(), a.getColumnTo() + 2).equalsPawn("B"))
-			{
-				state.removePawn(a.getRowTo(), a.getColumnTo() + 1);
-				this.movesWithutCapturing = -1;
-				this.loggGame.fine("Pedina bianca rimossa in: " + state.getBox(a.getRowTo(), a.getColumnTo() + 1));
+
+	private State checkCaptureBlackKingUp(State state, Action a) {
+		// ho il re sopra
+		if (a.getRowTo() > 1 && state.getPawn(a.getRowTo() - 1, a.getColumnTo()).equalsPawn("K")) {
+			// re sul trono
+			if (state.getBox(a.getRowTo() - 1, a.getColumnTo()).equals("e5")) {
+				if (state.getPawn(3, 4).equalsPawn("B") && state.getPawn(4, 5).equalsPawn("B")
+						&& state.getPawn(4, 3).equalsPawn("B")) {
+					state.setTurn(State.Turn.BLACKWIN);
+					this.loggGame
+							.fine("Nero vince con re catturato in: " + state.getBox(a.getRowTo() - 1, a.getColumnTo()));
+				}
 			}
-			if(state.getPawn(a.getRowTo(), a.getColumnTo() + 2).equalsPawn("T"))
-			{
-				state.removePawn(a.getRowTo(), a.getColumnTo() + 1);
-				this.movesWithutCapturing = -1;
-				this.loggGame.fine("Pedina bianca rimossa in: " + state.getBox(a.getRowTo(), a.getColumnTo() + 1));
+			// re adiacente al trono
+			if (state.getBox(a.getRowTo() - 1, a.getColumnTo()).equals("e6")) {
+				if (state.getPawn(5, 3).equalsPawn("B") && state.getPawn(5, 5).equalsPawn("B")) {
+					state.setTurn(State.Turn.BLACKWIN);
+					this.loggGame
+							.fine("Nero vince con re catturato in: " + state.getBox(a.getRowTo() - 1, a.getColumnTo()));
+				}
 			}
-			if(this.citadels.contains(state.getBox(a.getRowTo(), a.getColumnTo() + 2)))
-			{
-				state.removePawn(a.getRowTo(), a.getColumnTo() + 1);
-				this.movesWithutCapturing = -1;
-				this.loggGame.fine("Pedina bianca rimossa in: " + state.getBox(a.getRowTo(), a.getColumnTo() + 1));
+			if (state.getBox(a.getRowTo() - 1, a.getColumnTo()).equals("d5")) {
+				if (state.getPawn(4, 2).equalsPawn("B") && state.getPawn(3, 3).equalsPawn("B")) {
+					state.setTurn(State.Turn.BLACKWIN);
+					this.loggGame
+							.fine("Nero vince con re catturato in: " + state.getBox(a.getRowTo() - 1, a.getColumnTo()));
+				}
 			}
-			if(state.getBox(a.getRowTo(), a.getColumnTo()+2).equals("e5"))
-			{
-				state.removePawn(a.getRowTo(), a.getColumnTo() + 1);
-				this.movesWithutCapturing = -1;
-				this.loggGame.fine("Pedina bianca rimossa in: " + state.getBox(a.getRowTo(), a.getColumnTo() + 1));
+			if (state.getBox(a.getRowTo() - 1, a.getColumnTo()).equals("f5")) {
+				if (state.getPawn(4, 6).equalsPawn("B") && state.getPawn(3, 5).equalsPawn("B")) {
+					state.setTurn(State.Turn.BLACKWIN);
+					this.loggGame
+							.fine("Nero vince con re catturato in: " + state.getBox(a.getRowTo() - 1, a.getColumnTo()));
+				}
 			}
-			
+			// sono fuori dalle zone del trono
+			if (!state.getBox(a.getRowTo() - 1, a.getColumnTo()).equals("d5")
+					&& !state.getBox(a.getRowTo() - 1, a.getColumnTo()).equals("e4")
+					&& !state.getBox(a.getRowTo() - 1, a.getColumnTo()).equals("f5")
+					&& !state.getBox(a.getRowTo() - 1, a.getColumnTo()).equals("e5")) {
+				if (state.getPawn(a.getRowTo() - 2, a.getColumnTo()).equalsPawn("B")
+						|| this.citadels.contains(state.getBox(a.getRowTo() - 2, a.getColumnTo()))) {
+					state.setTurn(State.Turn.BLACKWIN);
+					this.loggGame
+							.fine("Nero vince con re catturato in: " + state.getBox(a.getRowTo() - 1, a.getColumnTo()));
+				}
+			}
 		}
-		
 		return state;
 	}
-	
-	private State checkCaptureBlackPawnLeft(State state, Action a){
-		//mangio a sinistra
-		if (a.getColumnTo() > 1
-				&& state.getPawn(a.getRowTo(), a.getColumnTo() - 1).equalsPawn("W")
+
+	private State checkCaptureBlackPawnRight(State state, Action a) {
+		// mangio a destra
+		if (a.getColumnTo() < state.getBoard().length - 2
+				&& state.getPawn(a.getRowTo(), a.getColumnTo() + 1).equalsPawn("W")) {
+			if (state.getPawn(a.getRowTo(), a.getColumnTo() + 2).equalsPawn("B")) {
+				state.removePawn(a.getRowTo(), a.getColumnTo() + 1);
+				this.movesWithutCapturing = -1;
+				this.loggGame.fine("Pedina bianca rimossa in: " + state.getBox(a.getRowTo(), a.getColumnTo() + 1));
+			}
+			if (state.getPawn(a.getRowTo(), a.getColumnTo() + 2).equalsPawn("T")) {
+				state.removePawn(a.getRowTo(), a.getColumnTo() + 1);
+				this.movesWithutCapturing = -1;
+				this.loggGame.fine("Pedina bianca rimossa in: " + state.getBox(a.getRowTo(), a.getColumnTo() + 1));
+			}
+			if (this.citadels.contains(state.getBox(a.getRowTo(), a.getColumnTo() + 2))) {
+				state.removePawn(a.getRowTo(), a.getColumnTo() + 1);
+				this.movesWithutCapturing = -1;
+				this.loggGame.fine("Pedina bianca rimossa in: " + state.getBox(a.getRowTo(), a.getColumnTo() + 1));
+			}
+			if (state.getBox(a.getRowTo(), a.getColumnTo() + 2).equals("e5")) {
+				state.removePawn(a.getRowTo(), a.getColumnTo() + 1);
+				this.movesWithutCapturing = -1;
+				this.loggGame.fine("Pedina bianca rimossa in: " + state.getBox(a.getRowTo(), a.getColumnTo() + 1));
+			}
+
+		}
+
+		return state;
+	}
+
+	private State checkCaptureBlackPawnLeft(State state, Action a) {
+		// mangio a sinistra
+		if (a.getColumnTo() > 1 && state.getPawn(a.getRowTo(), a.getColumnTo() - 1).equalsPawn("W")
 				&& (state.getPawn(a.getRowTo(), a.getColumnTo() - 2).equalsPawn("B")
 						|| state.getPawn(a.getRowTo(), a.getColumnTo() - 2).equalsPawn("T")
 						|| this.citadels.contains(state.getBox(a.getRowTo(), a.getColumnTo() - 2))
-						|| (state.getBox(a.getRowTo(), a.getColumnTo()-2).equals("e5"))))
-		{
+						|| (state.getBox(a.getRowTo(), a.getColumnTo() - 2).equals("e5")))) {
 			state.removePawn(a.getRowTo(), a.getColumnTo() - 1);
 			this.movesWithutCapturing = -1;
 			this.loggGame.fine("Pedina bianca rimossa in: " + state.getBox(a.getRowTo(), a.getColumnTo() - 1));
 		}
 		return state;
 	}
-	
-	private State checkCaptureBlackPawnUp(State state, Action a){
+
+	private State checkCaptureBlackPawnUp(State state, Action a) {
 		// controllo se mangio sopra
-		if (a.getRowTo() > 1
-				&& state.getPawn(a.getRowTo() - 1, a.getColumnTo()).equalsPawn("W")
+		if (a.getRowTo() > 1 && state.getPawn(a.getRowTo() - 1, a.getColumnTo()).equalsPawn("W")
 				&& (state.getPawn(a.getRowTo() - 2, a.getColumnTo()).equalsPawn("B")
 						|| state.getPawn(a.getRowTo() - 2, a.getColumnTo()).equalsPawn("T")
 						|| this.citadels.contains(state.getBox(a.getRowTo() - 2, a.getColumnTo()))
-						|| (state.getBox(a.getRowTo()-2, a.getColumnTo()).equals("e5"))))
-		{
-			state.removePawn(a.getRowTo()-1, a.getColumnTo());
+						|| (state.getBox(a.getRowTo() - 2, a.getColumnTo()).equals("e5")))) {
+			state.removePawn(a.getRowTo() - 1, a.getColumnTo());
 			this.movesWithutCapturing = -1;
-			this.loggGame.fine("Pedina bianca rimossa in: " + state.getBox(a.getRowTo()-1, a.getColumnTo() ));
+			this.loggGame.fine("Pedina bianca rimossa in: " + state.getBox(a.getRowTo() - 1, a.getColumnTo()));
 		}
 		return state;
 	}
-	
-	private State checkCaptureBlackPawnDown(State state, Action a){
+
+	private State checkCaptureBlackPawnDown(State state, Action a) {
 		// controllo se mangio sotto
 		if (a.getRowTo() < state.getBoard().length - 2
 				&& state.getPawn(a.getRowTo() + 1, a.getColumnTo()).equalsPawn("W")
 				&& (state.getPawn(a.getRowTo() + 2, a.getColumnTo()).equalsPawn("B")
 						|| state.getPawn(a.getRowTo() + 2, a.getColumnTo()).equalsPawn("T")
 						|| this.citadels.contains(state.getBox(a.getRowTo() + 2, a.getColumnTo()))
-						|| (state.getBox(a.getRowTo()+2, a.getColumnTo()).equals("e5"))))
-		{
-			state.removePawn(a.getRowTo()+1, a.getColumnTo());
+						|| (state.getBox(a.getRowTo() + 2, a.getColumnTo()).equals("e5")))) {
+			state.removePawn(a.getRowTo() + 1, a.getColumnTo());
 			this.movesWithutCapturing = -1;
-			this.loggGame.fine("Pedina bianca rimossa in: " + state.getBox(a.getRowTo()+1, a.getColumnTo() ));
+			this.loggGame.fine("Pedina bianca rimossa in: " + state.getBox(a.getRowTo() + 1, a.getColumnTo()));
 		}
 		return state;
 	}
-	
+
 	private State checkCaptureBlack(State state, Action a) {
-		
+
 		this.checkCaptureBlackPawnRight(state, a);
 		this.checkCaptureBlackPawnLeft(state, a);
 		this.checkCaptureBlackPawnUp(state, a);
@@ -714,7 +683,7 @@ public class GameAshtonTablut implements Game {
 		this.checkCaptureBlackKingLeft(state, a);
 		this.checkCaptureBlackKingDown(state, a);
 		this.checkCaptureBlackKingUp(state, a);
-		
+
 		this.movesWithutCapturing++;
 		return state;
 	}
@@ -775,4 +744,3 @@ public class GameAshtonTablut implements Game {
 	}
 
 }
-
