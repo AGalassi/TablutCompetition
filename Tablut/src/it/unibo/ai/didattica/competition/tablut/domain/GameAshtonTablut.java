@@ -78,7 +78,7 @@ public class GameAshtonTablut implements Game {
 		loggGame.addHandler(this.fh);
 		this.fh.setFormatter(new SimpleFormatter());
 		loggGame.setLevel(Level.FINE);
-		loggGame.fine("Players:\tWhite:\t" + whiteName + "\tvs\t" + blackName);
+		loggGame.fine("Players:\t" + whiteName + "\tvs\t" + blackName);
 		loggGame.fine("Repeated moves allowed:\t" + repeated_moves_allowed + "\tCache:\t" + cache_size);
 		loggGame.fine("Inizio partita");
 		loggGame.fine("Stato:\n" + state.toString());

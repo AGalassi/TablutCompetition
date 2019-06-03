@@ -424,6 +424,7 @@ public class Server implements Runnable {
 			}
 			System.out.println("Black player name:\t" + blackName);
 			loggSys.fine("Black player name:\t" + blackName);
+			blackName = temp;
 
 		} catch (IOException e) {
 			System.out.println("Socket error....");
@@ -486,7 +487,7 @@ public class Server implements Runnable {
 			long hoursoccurred = (ti.getTime() - starttime.getTime()) / 60 / 60 / 1000;
 			if (hoursoccurred > hourlimit) {
 				System.out.println("TIMEOUT! END OF THE GAME...");
-				loggSys.warning("Chiusura programma per timeout di cinque ore");
+				loggSys.warning("Chiusura programma per timeout di " + hourlimit + " ore");
 			}
 
 			switch (state.getTurn()) {
@@ -564,6 +565,11 @@ public class Server implements Runnable {
 					}
 				}
 			}
+
+			// TODO: in case of more errors allowed, it is fair to send the same
+			// state once again?
+			// In case not, the client should always read and act when is their
+			// turn
 
 			// SEND STATE TO PLAYERS
 			try {
