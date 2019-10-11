@@ -49,7 +49,7 @@ public class LogReader {
 
 		PrintWriter players_out = new PrintWriter(players_out_file);
 		players_out
-				.write("Player\tPoints\tWins\tLosses\tDraws\tCaptures\tCaptured\tMove points\tWin moves\tLoss moves\tTot moves"
+				.write("Player\tPoints\tWins\tLosses\tDraws\tCaptures\tCaptured\tMove points\tWin moves\tLoss moves\tTot moves\t"
 						+ "AVG Points\tAVG Wins\tAVG Losses\tAVG Draws\tAVG Captures\tAVG Captured\tAVG moves"
 						+ "\n\n");
 
@@ -131,40 +131,46 @@ public class LogReader {
 						}
 					}
 
-					captures.put(whiteP, captures.get(whiteP) + blackcaptured);
-					captured.put(blackP, captured.get(blackP) + blackcaptured);
-					captures.put(blackP, captures.get(blackP) + whitecaptured);
-					captured.put(whiteP, captured.get(whiteP) + whitecaptured);
+					if (ending != null) {
 
-					games.put(blackP, games.get(blackP) + 1);
-					games.put(whiteP, games.get(whiteP) + 1);
+						captures.put(whiteP, captures.get(whiteP) + blackcaptured);
+						captured.put(blackP, captured.get(blackP) + blackcaptured);
+						captures.put(blackP, captures.get(blackP) + whitecaptured);
+						captured.put(whiteP, captured.get(whiteP) + whitecaptured);
 
-					moves.put(blackP, moves.get(blackP) + black_turns);
-					moves.put(whiteP, moves.get(whiteP) + white_turns);
+						games.put(blackP, games.get(blackP) + 1);
+						games.put(whiteP, games.get(whiteP) + 1);
 
-					switch (ending) {
-					case DRAW:
-						draws.put(whiteP, draws.get(whiteP) + 1);
-						draws.put(blackP, draws.get(blackP) + 1);
-						break;
-					case BLACKWIN:
-						losses.put(whiteP, losses.get(whiteP) + 1);
-						wins.put(blackP, wins.get(blackP) + 1);
-						lossmoves.put(whiteP, lossmoves.get(whiteP) + white_turns);
-						winmoves.put(blackP, winmoves.get(blackP) + black_turns);
-						break;
-					case WHITEWIN:
-						wins.put(whiteP, wins.get(whiteP) + 1);
-						losses.put(blackP, losses.get(blackP) + 1);
-						winmoves.put(whiteP, winmoves.get(whiteP) + white_turns);
-						lossmoves.put(blackP, lossmoves.get(blackP) + black_turns);
-						break;
-					default:
-						break;
-					}
+						moves.put(blackP, moves.get(blackP) + black_turns);
+						moves.put(whiteP, moves.get(whiteP) + white_turns);
 
-					game_out.write(whiteP + "\t" + blackP + "\t" + ending + "\t" + turn_counter + "\t" + whitecaptured
-							+ "\t" + blackcaptured + "\t" + white_turns + "\t" + black_turns + "\n");
+						switch (ending) {
+						case DRAW:
+							draws.put(whiteP, draws.get(whiteP) + 1);
+							draws.put(blackP, draws.get(blackP) + 1);
+							break;
+						case BLACKWIN:
+							losses.put(whiteP, losses.get(whiteP) + 1);
+							wins.put(blackP, wins.get(blackP) + 1);
+							lossmoves.put(whiteP, lossmoves.get(whiteP) + white_turns);
+							winmoves.put(blackP, winmoves.get(blackP) + black_turns);
+							break;
+						case WHITEWIN:
+							wins.put(whiteP, wins.get(whiteP) + 1);
+							losses.put(blackP, losses.get(blackP) + 1);
+							winmoves.put(whiteP, winmoves.get(whiteP) + white_turns);
+							lossmoves.put(blackP, lossmoves.get(blackP) + black_turns);
+							break;
+						default:
+							break;
+						}
+
+						game_out.write(
+								whiteP + "\t" + blackP + "\t" + ending + "\t" + turn_counter + "\t" + whitecaptured
+										+ "\t" + blackcaptured + "\t" + white_turns + "\t" + black_turns + "\n");
+					} else
+						game_out.write("ERROR IN " + whiteP + " vs " + blackP + "\n");
+
 					game_out.flush();
 					br.close();
 
