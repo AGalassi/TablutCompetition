@@ -12,6 +12,7 @@ import java.util.Date;
 import java.util.logging.*;
 
 import it.unibo.ai.didattica.competition.tablut.domain.*;
+import it.unibo.ai.didattica.competition.tablut.domain.State.Turn;
 import it.unibo.ai.didattica.competition.tablut.gui.Gui;
 import it.unibo.ai.didattica.competition.tablut.util.StreamUtils;
 
@@ -261,7 +262,7 @@ public class Server implements Runnable {
 		/**
 		 * Number of hours that a game can last before the timeout
 		 */
-		int hourlimit = 5;
+		int hourlimit = 10;
 		/**
 		 * Endgame state reached?
 		 */
@@ -480,33 +481,10 @@ public class Server implements Runnable {
 		// GAME CYCLE
 		while (!endgame) {
 			// RECEIVE MOVE
-
+			
 			// System.out.println("State: \n"+state.toString());
 			System.out.println("Waiting for " + state.getTurn() + "...");
-			Date ti = new Date();
-			long hoursoccurred = (ti.getTime() - starttime.getTime()) / 60 / 60 / 1000;
-			if (hoursoccurred > hourlimit) {
-				System.out.println("TIMEOUT! END OF THE GAME...");
-				loggSys.warning("Chiusura programma per timeout di " + hourlimit + " ore");
-			}
 
-			switch (state.getTurn()) {
-			case WHITE:
-				tin = Turnwhite;
-				break;
-			case BLACK:
-				tin = Turnblack;
-				break;
-			case BLACKWIN:
-				break;
-			case WHITEWIN:
-				break;
-			case DRAW:
-				break;
-			default:
-				loggSys.warning("Chiusura sistema per errore turno");
-				System.exit(4);
-			}
 			// create the process that listen the answer
 			t = new Thread(tin);
 			t.start();
@@ -571,6 +549,15 @@ public class Server implements Runnable {
 			// In case not, the client should always read and act when is their
 			// turn
 
+			// GAME TOO LONG, TIMEOUT
+			Date ti = new Date();
+			long hoursoccurred = (ti.getTime() - starttime.getTime()) / 60 / 60 / 1000;
+			if (hoursoccurred > hourlimit) {
+				System.out.println("TIMEOUT! END OF THE GAME...");
+				loggSys.warning("Chiusura programma per timeout di " + hourlimit + " ore");
+				state.setTurn(Turn.DRAW);
+			}
+
 			// SEND STATE TO PLAYERS
 			try {
 				theGson = gson.toJson(state);
@@ -587,20 +574,34 @@ public class Server implements Runnable {
 				System.exit(1);
 			}
 
-			// CHECK END OF GAME
-			if (!state.getTurn().equalsTurn("W") && !state.getTurn().equalsTurn("B")) {
+			switch (state.getTurn()) {
+			case WHITE:
+				tin = Turnwhite;
+				break;
+			case BLACK:
+				tin = Turnblack;
+				break;
+			case BLACKWIN:
 				System.out.println("END OF THE GAME");
-				if (state.getTurn().equalsTurn(StateTablut.Turn.DRAW.toString())) {
-					System.out.println("RESULT: DRAW");
-				}
-				if (state.getTurn().equalsTurn(StateTablut.Turn.WHITEWIN.toString())) {
-					System.out.println("RESULT: PLAYER WHITE WIN");
-				}
-				if (state.getTurn().equalsTurn(StateTablut.Turn.BLACKWIN.toString())) {
-					System.out.println("RESULT: PLAYER BLACK WIN");
-				}
+				System.out.println("RESULT: PLAYER BLACK WIN");
 				endgame = true;
+				break;
+			case WHITEWIN:
+				System.out.println("END OF THE GAME");
+				System.out.println("RESULT: PLAYER WHITE WIN");
+				endgame = true;
+				break;
+			case DRAW:
+				System.out.println("END OF THE GAME");
+				System.out.println("RESULT: DRAW");
+				endgame = true;
+				break;
+			default:
+				loggSys.warning("Chiusura sistema");
+				System.exit(4);
 			}
+
+
 		}
 		System.exit(0);
 	}
