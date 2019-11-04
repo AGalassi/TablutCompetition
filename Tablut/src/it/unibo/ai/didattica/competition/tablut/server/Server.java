@@ -463,6 +463,7 @@ public class Server implements Runnable {
 
 		// SEND INITIAL STATE
 
+		tin = Turnwhite;
 		try {
 			theGson = gson.toJson(state);
 			StreamUtils.writeString(whiteState, theGson);
