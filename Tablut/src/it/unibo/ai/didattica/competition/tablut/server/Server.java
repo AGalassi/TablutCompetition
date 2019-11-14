@@ -27,6 +27,9 @@ import com.google.gson.Gson;
  */
 public class Server implements Runnable {
 
+	public static int whitePort = 5800;
+	public static int blackPort = 5801;
+
 	/**
 	 * State of the game
 	 */
@@ -345,8 +348,8 @@ public class Server implements Runnable {
 
 		// ESTABLISH CONNECTIONS AND NAME READING
 		try {
-			this.socketWhite = new ServerSocket(5800);
-			this.socketBlack = new ServerSocket(5801);
+			this.socketWhite = new ServerSocket(whitePort);
+			this.socketBlack = new ServerSocket(blackPort);
 
 			white = this.socketWhite.accept();
 			loggSys.fine("Accettata connessione con client giocatore Bianco");
