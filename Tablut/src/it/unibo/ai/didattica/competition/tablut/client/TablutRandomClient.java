@@ -1,13 +1,20 @@
 package it.unibo.ai.didattica.competition.tablut.client;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
+import java.net.Socket;
 import java.net.UnknownHostException;
+import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import com.google.gson.Gson;
+
 import it.unibo.ai.didattica.competition.tablut.domain.*;
 import it.unibo.ai.didattica.competition.tablut.domain.State.Turn;
+import it.unibo.ai.didattica.competition.tablut.server.Server;
 
 /**
  * 
@@ -18,27 +25,30 @@ public class TablutRandomClient extends TablutClient {
 
 	private int game;
 
-	public TablutRandomClient(String player, String name, int gameChosen) throws UnknownHostException, IOException {
-		super(player, name);
+	public TablutRandomClient(String player, String name, int gameChosen, int timeout, String ipAddress) throws UnknownHostException, IOException {
+		super(player, name, timeout, ipAddress);
 		game = gameChosen;
+	}
+	
+	public TablutRandomClient(String player, String name, int timeout, String ipAddress) throws UnknownHostException, IOException {
+		this(player, name, 4, timeout, ipAddress);
+	}
+	
+	public TablutRandomClient(String player, int timeout, String ipAddress) throws UnknownHostException, IOException {
+		this(player, "random", 4, timeout, ipAddress);
 	}
 
 	public TablutRandomClient(String player) throws UnknownHostException, IOException {
-		this(player, "random", 4);
+		this(player, "random", 4, 60, "localhost");
 	}
 
-	public TablutRandomClient(String player, String name) throws UnknownHostException, IOException {
-		this(player, name, 4);
-	}
-
-	public TablutRandomClient(String player, int gameChosen) throws UnknownHostException, IOException {
-		this(player, "random", gameChosen);
-	}
 
 	public static void main(String[] args) throws UnknownHostException, IOException, ClassNotFoundException {
 		int gametype = 4;
 		String role = "";
 		String name = "random";
+		String ipAddress = "localhost";
+		int timeout = 60;
 		// TODO: change the behavior?
 		if (args.length < 1) {
 			System.out.println("You must specify which player you are (WHITE or BLACK)");
@@ -49,14 +59,14 @@ public class TablutRandomClient extends TablutClient {
 		}
 		if (args.length == 2) {
 			System.out.println(args[1]);
-			gametype = Integer.parseInt(args[1]);
+			timeout = Integer.parseInt(args[1]);
 		}
 		if (args.length == 3) {
-			name = args[2];
+			ipAddress = args[2];
 		}
 		System.out.println("Selected client: " + args[0]);
 
-		TablutRandomClient client = new TablutRandomClient(role, name, gametype);
+		TablutRandomClient client = new TablutRandomClient(role, name, gametype, timeout, ipAddress);
 		client.run();
 	}
 
