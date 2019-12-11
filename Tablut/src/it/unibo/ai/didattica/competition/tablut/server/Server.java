@@ -29,6 +29,11 @@ public class Server implements Runnable {
 
 	public static int whitePort = 5800;
 	public static int blackPort = 5801;
+	
+	/**
+	 * Timeout for waiting for a client to connect
+	 */
+	public static int connectionTimeout = 300;
 
 	/**
 	 * State of the game
@@ -66,6 +71,9 @@ public class Server implements Runnable {
 
 	private ServerSocket socketWhite;
 	private ServerSocket socketBlack;
+
+	private Socket white;
+	private Socket black;
 
 	/**
 	 * Counter for the errors of the black player
@@ -257,6 +265,31 @@ public class Server implements Runnable {
 	}
 
 	/**
+	 * This class represents the socket waiting for a connection
+	 * @author Andrea Galassi
+	 *
+	 */
+	private class TCPConnection implements Runnable {
+		private ServerSocket serversocket;
+		private Socket socket;
+
+		public TCPConnection(ServerSocket serverSocket) {
+			this.serversocket = serverSocket;
+		}
+
+		public void run() {
+			try {
+				socket = serversocket.accept();
+			} catch (Exception e) {
+			}
+		}
+
+		public Socket getSocket() {
+			return socket;
+		}
+	}
+
+	/**
 	 * This method starts the proper game. It waits the connections from 2
 	 * clients, check the move and update the state. There is a timeout that
 	 * interrupts games that last too much
@@ -316,8 +349,7 @@ public class Server implements Runnable {
 
 		Date starttime = new Date();
 		Thread t;
-		Socket white = null;
-		Socket black = null;
+
 		/**
 		 * Channel to receive the move of the white player
 		 */
@@ -345,14 +377,37 @@ public class Server implements Runnable {
 		TCPInput tin = null;
 		TCPInput Turnwhite = null;
 		TCPInput Turnblack = null;
+		TCPConnection tc = null;
 
 		// ESTABLISH CONNECTIONS AND NAME READING
 		try {
 			this.socketWhite = new ServerSocket(whitePort);
 			this.socketBlack = new ServerSocket(blackPort);
+			
 
-			white = this.socketWhite.accept();
-			loggSys.fine("Accettata connessione con client giocatore Bianco");
+			// ESTABLISHING CONNECTION
+			tc = new TCPConnection(socketWhite);
+			t = new Thread(tc);
+			t.start();
+			loggSys.fine("Waiting for white connection..");
+			// timeout for connection
+			try {
+				int counter = 0;
+				while (counter < connectionTimeout && t.isAlive()) {
+					Thread.sleep(1000);
+					counter++;
+				}
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			if (t.isAlive()) {
+				System.out.println("Timeout!!!!");
+				loggSys.warning("Closing system for timeout!");
+				System.exit(0);
+			}
+			
+			white = tc.getSocket();
+			loggSys.fine("White player connected");
 			whiteMove = new DataInputStream(white.getInputStream());
 			whiteState = new DataOutputStream(white.getOutputStream());
 			Turnwhite = new TCPInput(whiteMove);
@@ -361,8 +416,8 @@ public class Server implements Runnable {
 			t = new Thread(Turnwhite);
 			t.start();
 			loggSys.fine("Lettura nome player bianco in corso..");
+			// timeout for name declaration
 			try {
-				// timer for the move
 				int counter = 0;
 				while (counter < time && t.isAlive()) {
 					Thread.sleep(1000);
@@ -371,8 +426,6 @@ public class Server implements Runnable {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-
-			// timeout for name declaration
 			if (t.isAlive()) {
 				System.out.println("Timeout!!!!");
 				loggSys.warning("Chiusura sistema per timeout");
@@ -391,7 +444,28 @@ public class Server implements Runnable {
 			System.out.println("White player name:\t" + whiteName);
 			loggSys.fine("White player name:\t" + whiteName);
 
-			black = this.socketBlack.accept();
+			
+			// ESTABLISHING CONNECTION
+			tc = new TCPConnection(socketBlack);
+			t = new Thread(tc);
+			t.start();
+			loggSys.fine("Waiting for Black connection..");
+			// timeout for connection
+			try {
+				int counter = 0;
+				while (counter < connectionTimeout && t.isAlive()) {
+					Thread.sleep(1000);
+					counter++;
+				}
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+			if (t.isAlive()) {
+				System.out.println("Timeout!!!!");
+				loggSys.warning("Closing system for timeout!");
+				System.exit(0);
+			}
+			black = tc.getSocket();
 			loggSys.fine("Accettata connessione con client giocatore Nero");
 			blackMove = new DataInputStream(black.getInputStream());
 			blackState = new DataOutputStream(black.getOutputStream());
@@ -485,7 +559,7 @@ public class Server implements Runnable {
 		// GAME CYCLE
 		while (!endgame) {
 			// RECEIVE MOVE
-			
+
 			// System.out.println("State: \n"+state.toString());
 			System.out.println("Waiting for " + state.getTurn() + "...");
 
@@ -604,7 +678,6 @@ public class Server implements Runnable {
 				loggSys.warning("Chiusura sistema");
 				System.exit(4);
 			}
-
 
 		}
 		System.exit(0);
