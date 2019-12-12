@@ -450,5 +450,9 @@ public class GameModernTablut implements Game {
 		return state;
 	}
 
+	// TODO: Implement this
+	@Override
+	public void endGame(State state) {
+	}
 
 }

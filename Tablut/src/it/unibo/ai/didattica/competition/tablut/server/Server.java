@@ -652,6 +652,8 @@ public class Server implements Runnable {
 				System.exit(1);
 			}
 
+			this.game.endGame(state);
+
 			switch (state.getTurn()) {
 			case WHITE:
 				tin = Turnwhite;
@@ -680,6 +682,7 @@ public class Server implements Runnable {
 			}
 
 		}
+		
 		System.exit(0);
 	}
 

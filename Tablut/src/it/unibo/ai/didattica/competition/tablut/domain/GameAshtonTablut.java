@@ -742,5 +742,12 @@ public class GameAshtonTablut implements Game {
 	public void clearDrawConditions() {
 		drawConditions.clear();
 	}
+	
+
+	@Override
+	public void endGame(State state) {
+		this.loggGame.fine("Stato: "+state.toString());
+	}
+
 
 }

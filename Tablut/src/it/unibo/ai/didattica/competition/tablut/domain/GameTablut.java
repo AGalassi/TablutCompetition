@@ -584,6 +584,11 @@ public class GameTablut implements Game {
 		this.gameLog = gameLog;
 	}
 
+	@Override
+	public void endGame(State state) {
+		this.loggGame.fine("Stato: "+state.toString());
+	}
+
 	
 	
 }

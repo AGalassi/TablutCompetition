@@ -51,5 +51,5 @@ public interface Game {
 			throws BoardException, ActionException, StopException, PawnException, DiagonalException, ClimbingException,
 			ThroneException, OccupitedException, ClimbingCitadelException, CitadelException;
 
-
+	public void endGame(State state);
 }
