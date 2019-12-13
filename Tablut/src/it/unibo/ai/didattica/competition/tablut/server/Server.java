@@ -590,6 +590,7 @@ public class Server implements Runnable {
 			// translate the string into an action object
 			move = this.gson.fromJson(theGson, Action.class);
 			loggSys.fine("Move received.\t" + move.toString());
+			move.setTurn(state.getTurn());
 			System.out.println("Suggested move: " + move.toString());
 
 			try {
@@ -652,7 +653,6 @@ public class Server implements Runnable {
 				System.exit(1);
 			}
 
-			this.game.endGame(state);
 
 			switch (state.getTurn()) {
 			case WHITE:
@@ -662,16 +662,19 @@ public class Server implements Runnable {
 				tin = Turnblack;
 				break;
 			case BLACKWIN:
+				this.game.endGame(state);
 				System.out.println("END OF THE GAME");
 				System.out.println("RESULT: PLAYER BLACK WIN");
 				endgame = true;
 				break;
 			case WHITEWIN:
+				this.game.endGame(state);
 				System.out.println("END OF THE GAME");
 				System.out.println("RESULT: PLAYER WHITE WIN");
 				endgame = true;
 				break;
 			case DRAW:
+				this.game.endGame(state);
 				System.out.println("END OF THE GAME");
 				System.out.println("RESULT: DRAW");
 				endgame = true;

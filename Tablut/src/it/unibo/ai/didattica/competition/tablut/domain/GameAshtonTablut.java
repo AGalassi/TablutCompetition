@@ -746,7 +746,7 @@ public class GameAshtonTablut implements Game {
 
 	@Override
 	public void endGame(State state) {
-		this.loggGame.fine("Stato: "+state.toString());
+		this.loggGame.fine("Stato:\n"+state.toString());
 	}
 
 
