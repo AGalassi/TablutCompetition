@@ -17,6 +17,7 @@ import it.unibo.ai.didattica.competition.tablut.gui.Gui;
 import it.unibo.ai.didattica.competition.tablut.util.StreamUtils;
 
 import com.google.gson.Gson;
+import org.apache.commons.cli.*;
 
 /**
  * this class represent the server of the match: 2 clients with TCP connection
@@ -126,6 +127,97 @@ public class Server implements Runnable {
 		int gameChosen = 4;
 		boolean enableGui = true;
 
+		CommandLineParser parser = new DefaultParser();
+
+		Options options = new Options();
+
+		options.addOption("t","time", true, "time must be an integer (number of seconds); default: 60");
+		options.addOption("c", "cache", true, "cache must be an integer, negative value means infinite; default: infinite");
+		options.addOption("e", "errors", true, "errors must be an integer >= 0; default: 0");
+		options.addOption("s", "repeatedState", true, "repeatedStates must be an integer >= 0; default: 0");
+		options.addOption("r","game rules", true, "game rules must be an integer; 1 for Tablut, 2 for Modern, 3 for Brandub, 4 for Ashton; default: 4");
+		options.addOption("g","enableGUI", false, "enableGUI if option is present");
+
+		HelpFormatter formatter = new HelpFormatter();
+		formatter.printHelp("java Server", options);
+
+		try{
+			CommandLine cmd = parser.parse( options, args );
+			if (cmd.hasOption("t")){
+				String timeInsert = cmd.getOptionValue("t");
+				try{
+					time = Integer.parseInt(timeInsert);
+					if(time<1){
+						System.out.println("Time format not allowed!");
+						formatter.printHelp("java Server", options);
+						System.exit(1);
+					}
+				}catch (NumberFormatException e){
+					System.out.println("The time format is not correct!");
+					formatter.printHelp("java Server", options);
+					System.exit(1);
+				}
+			}
+			if (cmd.hasOption("c")){
+				String moveCacheInsert = cmd.getOptionValue("c");
+				try{
+					moveCache = Integer.parseInt(moveCacheInsert);
+				}catch (NumberFormatException e){
+					System.out.println("Number format is not correct!");
+					formatter.printHelp("java Server", options);
+					System.exit(1);
+				}
+			}
+			if (cmd.hasOption("e")){
+				try{
+					errors = Integer.parseInt(cmd.getOptionValue("e"));
+				}catch (NumberFormatException e) {
+					System.out.println("The error format is not correct!");
+					formatter.printHelp("java Server", options);
+					System.exit(1);
+				}
+			}
+			if (cmd.hasOption("s")){
+				try{
+					repeated = Integer.parseInt(cmd.getOptionValue("s"));
+					if (repeated<0){
+						System.out.println("he RepeatedStates value is not allowed!");
+						formatter.printHelp("java Server", options);
+						System.exit(1);
+					}
+				}catch (NumberFormatException e){
+					System.out.println("The RepeatedStates format is not correct!");
+					formatter.printHelp("java Server", options);
+					System.exit(1);
+				}
+			}
+
+			if(cmd.hasOption("r")){
+				try{
+					gameChosen = Integer.parseInt(cmd.getOptionValue("r"));
+					if (gameChosen < 0 || gameChosen > 4){
+						System.out.println("Game format not allowed!");
+						formatter.printHelp("java Server", options);
+						System.exit(1);
+					}
+				}catch (NumberFormatException e){
+					System.out.println("The game format is not correct!");
+					formatter.printHelp("java Server", options);
+					System.exit(1);
+				}
+			}
+
+			if(cmd.hasOption("g")){
+				enableGui=true;
+			}else{
+				enableGui=false;
+			}
+
+		}catch (ParseException exp){
+			System.out.println( "Unexpected exception:" + exp.getMessage() );
+		}
+
+		/*
 		String usage = "Usage: java Server [-t <time>] [-c <cache>] [-e <errors>] [-s <repeatedState>] [-r <game rules>] [-g <enableGUI>]\n"
 				+ "\tenableGUI must be >0 for enabling it; default 1"
 				+ "\tgame rules must be an integer; 1 for Tablut, 2 for Modern, 3 for Brandub, 4 for Ashton; default: 4\n"
@@ -235,6 +327,7 @@ public class Server implements Runnable {
 			}
 
 		}
+		*/
 
 		// Start the server
 		Server engine = new Server(time, moveCache, errors, repeated, gameChosen, enableGui);

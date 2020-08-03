@@ -9,9 +9,12 @@
 
     <target name="compile">
         <mkdir dir="build"/>
-        <javac encoding="iso-8859-1" srcdir="src" 
-            destdir="build"
-            classpath="lib/gson-2.2.2.jar" />
+        <javac encoding="iso-8859-1" srcdir="src" destdir="build">
+            <classpath>
+                <pathelement path="lib/gson-2.2.2.jar" />
+                <pathelement path="lib/commons-cli-1.4.jar" />
+            </classpath>
+        </javac>
         <copy todir="build">
             <fileset dir="src" excludes="*.java"/>
         </copy>
@@ -21,6 +24,7 @@
         <java classname="it.unibo.ai.didattica.competition.tablut.server.Server" fork="true">
             <classpath>
                 <pathelement location="lib/gson-2.2.2.jar"/>
+                <pathelement location="lib/commons-cli-1.4.jar"/>
                 <pathelement location="build"/>
             </classpath>
         </java>
