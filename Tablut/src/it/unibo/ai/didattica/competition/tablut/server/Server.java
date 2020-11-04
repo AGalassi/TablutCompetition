@@ -14,6 +14,7 @@ import java.util.logging.*;
 import it.unibo.ai.didattica.competition.tablut.domain.*;
 import it.unibo.ai.didattica.competition.tablut.domain.State.Turn;
 import it.unibo.ai.didattica.competition.tablut.gui.Gui;
+import it.unibo.ai.didattica.competition.tablut.util.Configuration;
 import it.unibo.ai.didattica.competition.tablut.util.StreamUtils;
 
 import com.google.gson.Gson;
@@ -27,9 +28,6 @@ import org.apache.commons.cli.*;
  *
  */
 public class Server implements Runnable {
-
-	public static int whitePort = 5800;
-	public static int blackPort = 5801;
 	
 	/**
 	 * Timeout for waiting for a client to connect
@@ -362,8 +360,8 @@ public class Server implements Runnable {
 
 		// ESTABLISH CONNECTIONS AND NAME READING
 		try {
-			this.socketWhite = new ServerSocket(whitePort);
-			this.socketBlack = new ServerSocket(blackPort);
+			this.socketWhite = new ServerSocket(Configuration.whitePort);
+			this.socketBlack = new ServerSocket(Configuration.blackPort);
 			
 
 			// ESTABLISHING CONNECTION
