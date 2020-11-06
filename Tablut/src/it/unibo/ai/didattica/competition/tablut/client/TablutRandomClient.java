@@ -14,7 +14,6 @@ import com.google.gson.Gson;
 
 import it.unibo.ai.didattica.competition.tablut.domain.*;
 import it.unibo.ai.didattica.competition.tablut.domain.State.Turn;
-import it.unibo.ai.didattica.competition.tablut.server.Server;
 
 /**
  * 
@@ -128,7 +127,7 @@ public class TablutRandomClient extends TablutClient {
 			}
 
 			if (this.getPlayer().equals(Turn.WHITE)) {
-				// è il mio turno
+				// Mio turno
 				if (this.getCurrentState().getTurn().equals(StateTablut.Turn.WHITE)) {
 					int[] buf;
 					for (int i = 0; i < state.getBoard().length; i++) {
@@ -197,7 +196,7 @@ public class TablutRandomClient extends TablutClient {
 					empty.clear();
 
 				}
-				// è il turno dell'avversario
+				// Turno dell'avversario
 				else if (state.getTurn().equals(StateTablut.Turn.BLACK)) {
 					System.out.println("Waiting for your opponent move... ");
 				}
@@ -219,7 +218,7 @@ public class TablutRandomClient extends TablutClient {
 
 			} else {
 
-				// è il mio turno
+				// Mio turno
 				if (this.getCurrentState().getTurn().equals(StateTablut.Turn.BLACK)) {
 					int[] buf;
 					for (int i = 0; i < state.getBoard().length; i++) {
