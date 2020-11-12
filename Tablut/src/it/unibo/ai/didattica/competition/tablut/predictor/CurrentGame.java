@@ -65,7 +65,7 @@ public class CurrentGame implements Game<WrapperState, Action , State.Turn> {
 			|| state.getState().getTurn().equalsTurn(State.Turn.WHITEWIN.toString())
 			|| state.getState().getTurn().equalsTurn(State.Turn.DRAW.toString())) {
 			return true;
-		}else if (state.getTurn()-initialState.getTurn()>=3) {
+		}else if (state.getTurn()-initialState.getTurn()>=numberOfBranches) {
 			return true;
 		}
 		return false;

@@ -69,7 +69,7 @@ public class PlayerAI extends TablutClient {
 			}
 			
 			state = this.getCurrentState();
-			this.get
+			
 			if (this.getPlayer().equals(state.getTurn())) {
 				//sta a me		
 			} else if (state.getTurn().equals(StateTablut.Turn.WHITEWIN)){

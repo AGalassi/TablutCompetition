@@ -8,9 +8,5 @@
 	</classpathentry>
 	<classpathentry kind="lib" path="lib/gson-2.2.2.jar"/>
 	<classpathentry kind="lib" path="lib/commons-cli-1.4.jar"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/aima-all"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/aima-core"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/aima-gui"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/aimax-osm"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
