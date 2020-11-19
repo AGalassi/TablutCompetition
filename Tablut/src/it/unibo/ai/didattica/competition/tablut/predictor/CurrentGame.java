@@ -46,6 +46,7 @@ public class CurrentGame implements Game<WrapperState, Action, State.Turn> {
 	@Override
 	public WrapperState getResult(WrapperState state, Action action) {
 		State risState = null;
+		WrapperState wrpRis = null;
 		int numberOfTurn = state.getTurn() + 1;
 		try {
 			risState = rules.makeMove(state.getState(), action);
@@ -53,8 +54,8 @@ public class CurrentGame implements Game<WrapperState, Action, State.Turn> {
 			System.out.println("Oh oh something wrong in CurrentGame getResult");
 			e.printStackTrace();
 		}
-
-		return new WrapperState(risState, numberOfTurn);
+		wrpRis = new WrapperState(risState, numberOfTurn);
+		return wrpRis;
 	}
 
 	@Override
@@ -71,11 +72,11 @@ public class CurrentGame implements Game<WrapperState, Action, State.Turn> {
 
 	@Override
 	public double getUtility(WrapperState state, Turn player) {
-		int ris = -1;
+		int ris = 16 - state.getState().getNumberOf(Pawn.BLACK);;
 		if (player.equalsTurn(Turn.BLACK.toString())) {
 			ris = 1; // State.getState().getNumberOf(Pawn.WHITE) + state.getState().getNumberOf(Pawn.KING);
 		} else if (player.equalsTurn(Turn.WHITE.toString())) {
-			ris = 16 - state.getState().getNumberOf(Pawn.BLACK); // state.getState().getNumberOf(Pawn.WHITE)
+			ris = state.getState().getNumberOf(Pawn.BLACK); // state.getState().getNumberOf(Pawn.WHITE)
 		}
 		return ris;
 	}

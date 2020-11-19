@@ -151,6 +151,10 @@ public class PlayerAI extends TablutClient {
 	private void writeBestAction(WrapperState state, CheckPossibleMoves rules) {
 		Predictor pr = new Predictor(state, rules);
 		Action a = pr.findBestAction(state);
+		if(a == null) {
+			State stateProva = this.getCurrentState();
+			Action a2 = pr.findBestAction(state);
+		}
 		System.out.println("Mossa scelta: " + a.toString());
 		//attenzione lo state che passo deve essere lo stesso, non mi � chiaro l'initial state di Game
 		try {

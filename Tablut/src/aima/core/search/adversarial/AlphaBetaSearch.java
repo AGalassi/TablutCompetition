@@ -62,12 +62,13 @@ public class AlphaBetaSearch<S, A, P> implements AdversarialSearch<S, A> {
 
     @Override
     public A makeDecision(S state) {
+    	S input = state;
         metrics = new Metrics();
         A result = null;
         double resultValue = Double.NEGATIVE_INFINITY;
-        P player = game.getPlayer(state);
+        P player = game.getPlayer(input);
         for (A action : game.getActions(state)) {
-            double value = minValue(game.getResult(state, action), player,
+            double value = minValue(game.getResult(input, action), player,
                     Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
             if (value > resultValue) {
                 result = action;
@@ -78,13 +79,15 @@ public class AlphaBetaSearch<S, A, P> implements AdversarialSearch<S, A> {
     }
 
     public double maxValue(S state, P player, double alpha, double beta) {
+    	S input = state;
         metrics.incrementInt(METRICS_NODES_EXPANDED);
-        if (game.isTerminal(state))
-            return game.getUtility(state, player);
+        if (game.isTerminal(input))
+            return game.getUtility(input, player);
         double value = Double.NEGATIVE_INFINITY;
-        for (A action : game.getActions(state)) {
-            value = Math.max(value, minValue( //
-                    game.getResult(state, action), player, alpha, beta));
+        
+        for (A action : game.getActions(input)) {
+        	System.out.println(action.toString());
+            value = Math.max(value, minValue(game.getResult(input, action), player, alpha, beta));
             if (value >= beta)
                 return value;
             alpha = Math.max(alpha, value);
@@ -93,13 +96,15 @@ public class AlphaBetaSearch<S, A, P> implements AdversarialSearch<S, A> {
     }
 
     public double minValue(S state, P player, double alpha, double beta) {
+    	S input = state;
         metrics.incrementInt(METRICS_NODES_EXPANDED);
-        if (game.isTerminal(state))
-            return game.getUtility(state, player);
+        if (game.isTerminal(input))
+            return game.getUtility(input, player);
         double value = Double.POSITIVE_INFINITY;
-        for (A action : game.getActions(state)) {
+        
+        for (A action : game.getActions(input)) {
             value = Math.min(value, maxValue( //
-                    game.getResult(state, action), player, alpha, beta));
+                    game.getResult(input, action), player, alpha, beta));
             if (value <= alpha)
                 return value;
             beta = Math.min(beta, value);

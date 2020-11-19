@@ -281,14 +281,15 @@ public class CheckPossibleMoves {
 	}
 
 	public State makeMove(State state, Action a) {
+		State inp = state.clone();
 		// se sono arrivato qui, muovo la pedina
-		state = this.movePawn(state, a);
+		inp = this.movePawn(inp, a);
 
 		// a questo punto controllo lo stato per eventuali catture
-		if (state.getTurn().equalsTurn("W")) {
-			state = this.checkCaptureBlack(state, a);
-		} else if (state.getTurn().equalsTurn("B")) {
-			state = this.checkCaptureWhite(state, a);
+		if (inp.getTurn().equalsTurn("W")) {
+			inp = this.checkCaptureBlack(inp, a);
+		} else if (inp.getTurn().equalsTurn("B")) {
+			inp = this.checkCaptureWhite(inp, a);
 		}
 
 		// if something has been captured, clear cache for draws
@@ -301,9 +302,8 @@ public class CheckPossibleMoves {
 		int trovati = 0;
 		for (State s : drawConditions) {
 
-			System.out.println(s.toString());
 
-			if (s.equals(state)) {
+			if (s.equals(inp)) {
 				// DEBUG: //
 				// System.out.println("UGUALI:");
 				// System.out.println("STATO VECCHIO:\t" + s.toLinearString());
@@ -312,7 +312,7 @@ public class CheckPossibleMoves {
 
 				trovati++;
 				if (trovati > repeated_moves_allowed) {
-					state.setTurn(State.Turn.DRAW);
+					inp.setTurn(State.Turn.DRAW);
 					this.loggGame.fine("Partita terminata in pareggio per numero di stati ripetuti");
 					break;
 				}
@@ -330,14 +330,14 @@ public class CheckPossibleMoves {
 		if (cache_size >= 0 && this.drawConditions.size() > cache_size) {
 			this.drawConditions.remove(0);
 		}
-		this.drawConditions.add(state.clone());
+		this.drawConditions.add(inp.clone());
 
 		this.loggGame.fine("Current draw cache size: " + this.drawConditions.size());
 
-		this.loggGame.fine("Stato:\n" + state.toString());
+		this.loggGame.fine("Stato:\n" + inp.toString());
 		// System.out.println("Stato:\n" + state.toString());
 
-		return state;
+		return inp;
 	}
 
 	private State checkCaptureWhite(State state, Action a) {
