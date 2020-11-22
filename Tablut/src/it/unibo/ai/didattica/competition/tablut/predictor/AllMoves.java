@@ -7,7 +7,6 @@ import it.unibo.ai.didattica.competition.tablut.domain.Action;
 import it.unibo.ai.didattica.competition.tablut.domain.State;
 
 public class AllMoves {
-
 	private static CheckPossibleMoves rules = new CheckPossibleMoves(99, 0, "garbage", "fake", "fake");
 
 	public static List<Action> getAllmoves(State stato) {
@@ -28,8 +27,20 @@ public class AllMoves {
 			pawn2 = State.Pawn.KING;
 		}
 
-		for (int i = 0; i < stato.getBoard().length; i++) {
-			for (int j = 0; j < stato.getBoard().length; j++) {
+		int initialStart = 0; //(int) (Math.random() * 2);
+		int finish = 0;
+		int direction = 1;
+		if (initialStart == 0) {
+			finish = stato.getBoard().length - 1;
+			direction = 1;
+		} else {
+			initialStart = stato.getBoard().length - 1;
+			direction = -1;
+			finish = 0;
+		}
+
+		for (int i = initialStart; (initialStart == 0 ? i <= finish : i >= finish); i = i + (direction)) {
+			for (int j = initialStart; (initialStart == 0 ? j <= finish : j >= finish); j = j + (direction)) {
 				// If the pawn is black the second condition is not even evaluated,
 				// evaluated also if is turn black but white pawn
 				if (stato.getPawn(i, j).equalsPawn(pawn.toString())
@@ -39,6 +50,7 @@ public class AllMoves {
 					String from = stato.getBox(i, j);
 
 					// 4 for for each direction (up, down, left, right)
+
 					for (int k = i - 1; k >= 0 && !stop; k--) {
 						String to = stato.getBox(k, j);
 						try {
@@ -53,7 +65,9 @@ public class AllMoves {
 					}
 					stop = false;
 
-					for (int k = i + 1; k < stato.getBoard().length; k++) {
+					for (int k = i + 1; k < stato.getBoard().length && !stop; k++) {
+						if (k == i)
+							continue;
 						String to = stato.getBox(k, j);
 						try {
 							tmp = new Action(from, to, turn);
@@ -82,6 +96,8 @@ public class AllMoves {
 					stop = false;
 
 					for (int k = j + 1; k < stato.getBoard().length && !stop; k++) {
+						if (k == j)
+							continue;
 						String to = stato.getBox(i, k);
 						try {
 							tmp = new Action(from, to, turn);
@@ -96,7 +112,6 @@ public class AllMoves {
 				}
 			}
 		}
-
 		return ris;
 	}
 
