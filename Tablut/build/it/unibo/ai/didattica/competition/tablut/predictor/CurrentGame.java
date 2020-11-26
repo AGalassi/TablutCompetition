@@ -152,11 +152,14 @@ public class CurrentGame implements Game<WrapperState, Action, State.Turn> {
 			double weigthWhite = 1;
 			double weigthBlocked = 1 / 176.0;
 
+			if (state.getTurn() >= 4)
+				weigthBlocked *= 6;
+
 			double black = state.getState().getNumberOf(Pawn.BLACK) * weigthBlack;
 			double white = state.getState().getNumberOf(Pawn.WHITE) * weigthWhite;
 			double blocked = countTot * weigthBlocked;
 
-			ris = white - blocked - black;// +whiteBlocked * weight
+			ris = black - blocked - white;// +whiteBlocked * weight
 		}
 		// White
 		else if (player.equalsTurn(Turn.WHITE.toString())) {
@@ -227,7 +230,16 @@ public class CurrentGame implements Game<WrapperState, Action, State.Turn> {
 				return ris = 99999999 / (state.getTurn() - initialState.getTurn() + 1);
 			}
 
-			ris = state.getState().getNumberOf(Pawn.WHITE) - dist * 0.5 - state.getState().getNumberOf(Pawn.BLACK); //
+			double weigthWhite = 1.2;
+
+			int numbBlack = state.getState().getNumberOf(Pawn.BLACK);
+
+			double weigthDist = (17 - numbBlack) * 0.07;
+
+			if (state.getTurn() >= 4)
+				weigthWhite = 0.7;
+
+			ris = state.getState().getNumberOf(Pawn.WHITE) * weigthWhite - dist * weigthDist - numbBlack; //
 			// state.getState().getNumberOf(Pawn.WHITE)
 		}
 		return ris;

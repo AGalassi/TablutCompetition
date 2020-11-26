@@ -27,7 +27,7 @@ public class AllMoves {
 			pawn2 = State.Pawn.KING;
 		}
 
-		int initialStart = 0; //(int) (Math.random() * 2);
+		int initialStart = (int) (Math.random() * 2);
 		int finish = 0;
 		int direction = 1;
 		if (initialStart == 0) {
