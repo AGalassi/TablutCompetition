@@ -27,7 +27,7 @@ public class AllMoves {
 			pawn2 = State.Pawn.KING;
 		}
 
-		int initialStart = 0; //(int) (Math.random() * 2);
+		int initialStart = (int) (Math.random() * 2);
 		int finish = 0;
 		int direction = 1;
 		if (initialStart == 0) {
@@ -66,8 +66,6 @@ public class AllMoves {
 					stop = false;
 
 					for (int k = i + 1; k < stato.getBoard().length && !stop; k++) {
-						if (k == i)
-							continue;
 						String to = stato.getBox(k, j);
 						try {
 							tmp = new Action(from, to, turn);
@@ -96,8 +94,6 @@ public class AllMoves {
 					stop = false;
 
 					for (int k = j + 1; k < stato.getBoard().length && !stop; k++) {
-						if (k == j)
-							continue;
 						String to = stato.getBox(i, k);
 						try {
 							tmp = new Action(from, to, turn);

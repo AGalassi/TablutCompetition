@@ -79,23 +79,62 @@ public class CurrentGame implements Game<WrapperState, Action, State.Turn> {
 		if (player.equalsTurn(Turn.BLACK.toString())) {
 			int whiteBlocked = 0;
 			int L = state.getState().getBoard().length;
+			int countTot = 0;
+			double weigthKing = 5;
 
-			Pawn[][] board = state.getState().getBoard();
+//			Pawn[][] board = state.getState().getBoard();
 			for (int i = 0; i < state.getState().getBoard().length; ++i) {
 				for (int j = 0; j < state.getState().getBoard().length; ++j) {
-					if (board[i][j].equals(Pawn.BLACK)) {
-						if ((i + 1 < L && board[i + 1][j].equals(Pawn.WHITE))) {
-							++whiteBlocked;
+//					if (board[i][j].equals(Pawn.BLACK)) {
+//						if ((i + 1 < L && board[i + 1][j].equals(Pawn.WHITE))) {
+//							++whiteBlocked;
+//						}
+//						if ((i - 1 >= 0 && board[i - 1][j].equals(Pawn.WHITE))) {
+//							++whiteBlocked;
+//						}
+//						if ((j - 1 >= 0 && board[i][j - 1].equals(Pawn.WHITE))) {
+//							++whiteBlocked;
+//						}
+//						if ((j + 1 < L && board[i][j + 1].equals(Pawn.WHITE))) {
+//							++whiteBlocked;
+//						}
+//					}
+					if (state.getState().getPawn(i, j).equals(Pawn.WHITE)
+							|| state.getState().getPawn(i, j).equals(Pawn.KING)) {
+						int count = 0;
+
+						for (int k = i - 1; k >= 0; k--) {
+							Pawn pawnBlack = state.getState().getPawn(k, j);
+							if (pawnBlack.equals(Pawn.BLACK))
+								break;
+							count++;
 						}
-						if ((i - 1 >= 0 && board[i - 1][j].equals(Pawn.WHITE))) {
-							++whiteBlocked;
+
+						for (int k = i + 1; k < state.getState().getBoard().length; k++) {
+							Pawn pawnBlack = state.getState().getPawn(k, j);
+							if (pawnBlack.equals(Pawn.BLACK))
+								break;
+							count++;
 						}
-						if ((j - 1 >= 0 && board[i][j - 1].equals(Pawn.WHITE))) {
-							++whiteBlocked;
+
+						for (int k = j - 1; k >= 0; k--) {
+							Pawn pawnBlack = state.getState().getPawn(k, j);
+							if (pawnBlack.equals(Pawn.BLACK))
+								break;
+							count++;
 						}
-						if ((j + 1 < L && board[i][j + 1].equals(Pawn.WHITE))) {
-							++whiteBlocked;
+
+						for (int k = j + 1; k < state.getState().getBoard().length; k++) {
+							Pawn pawnBlack = state.getState().getPawn(k, j);
+							if (pawnBlack.equals(Pawn.BLACK))
+								break;
+							count++;
 						}
+
+						if (state.getState().getPawn(i, j).equals(Pawn.KING))
+							count *= weigthKing;
+
+						countTot += count;
 					}
 				}
 			}
@@ -108,8 +147,16 @@ public class CurrentGame implements Game<WrapperState, Action, State.Turn> {
 				return ris = -99999999;
 			}
 
-			ris = whiteBlocked + state.getState().getNumberOf(Pawn.WHITE) + state.getState().getNumberOf(Pawn.KING)
-					- state.getState().getNumberOf(Pawn.BLACK);
+//			double weight = initialState.getTurn() / 25;
+			double weigthBlack = 0.7;
+			double weigthWhite = 1;
+			double weigthBlocked = 1 / 176.0;
+
+			double black = state.getState().getNumberOf(Pawn.BLACK) * weigthBlack;
+			double white = state.getState().getNumberOf(Pawn.WHITE) * weigthWhite;
+			double blocked = countTot * weigthBlocked;
+
+			ris = white - blocked - black;// +whiteBlocked * weight
 		}
 		// White
 		else if (player.equalsTurn(Turn.WHITE.toString())) {
