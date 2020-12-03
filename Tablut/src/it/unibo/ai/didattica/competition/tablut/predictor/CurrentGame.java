@@ -17,7 +17,7 @@ public class CurrentGame implements Game<WrapperState, Action, State.Turn> {
 	public CurrentGame(WrapperState initialState, CheckPossibleMoves rules) {
 		this.initialState = initialState;
 		this.rules = rules;
-		numberOfBranches = 3;
+		numberOfBranches = 4;
 	}
 
 	@Override

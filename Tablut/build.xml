@@ -64,6 +64,15 @@
         </java>
     </target>
 	
+	<target name="AIPlayer">
+		        <java classname="it.unibo.ai.didattica.competition.tablut.client.PlayerAI" fork="true">
+		            <classpath>
+		                <pathelement location="lib/gson-2.2.2.jar"/>
+		                <pathelement location="build"/>
+		            </classpath>
+		        </java>
+		 </target>
+	
 	<target name="AIPlayerWhite">
 	        <java classname="it.unibo.ai.didattica.competition.tablut.client.TablutAIWhitePlayer" fork="true">
 	            <classpath>

@@ -1,0 +1,28 @@
+Dec 02, 2020 4:52:25 PM it.unibo.ai.didattica.competition.tablut.server.Server run
+FINE: Accensione server
+Dec 02, 2020 4:52:25 PM it.unibo.ai.didattica.competition.tablut.server.Server run
+FINE: Partita di Tablut
+Dec 02, 2020 4:52:25 PM it.unibo.ai.didattica.competition.tablut.server.Server run
+FINE: Waiting for white connection..
+Dec 02, 2020 4:52:31 PM it.unibo.ai.didattica.competition.tablut.server.Server run
+FINE: White player connected
+Dec 02, 2020 4:52:31 PM it.unibo.ai.didattica.competition.tablut.server.Server run
+FINE: Lettura nome player bianco in corso..
+Dec 02, 2020 4:52:31 PM it.unibo.ai.didattica.competition.tablut.server.Server run
+FINE: White player name:	tabloidi
+Dec 02, 2020 4:52:31 PM it.unibo.ai.didattica.competition.tablut.server.Server run
+FINE: Waiting for Black connection..
+Dec 02, 2020 4:52:37 PM it.unibo.ai.didattica.competition.tablut.server.Server run
+FINE: Accettata connessione con client giocatore Nero
+Dec 02, 2020 4:52:37 PM it.unibo.ai.didattica.competition.tablut.server.Server run
+FINE: Lettura nome player nero in corso..
+Dec 02, 2020 4:52:37 PM it.unibo.ai.didattica.competition.tablut.server.Server run
+FINE: Black player name:	tabloidi
+Dec 02, 2020 4:52:38 PM it.unibo.ai.didattica.competition.tablut.server.Server run
+FINE: Invio messaggio ai giocatori
+Dec 02, 2020 4:52:38 PM it.unibo.ai.didattica.competition.tablut.server.Server run
+FINE: Lettura mossa player W in corso..
+Dec 02, 2020 4:53:38 PM it.unibo.ai.didattica.competition.tablut.server.Server run
+WARNING: Timeout! Player W lose!
+Dec 02, 2020 4:53:38 PM it.unibo.ai.didattica.competition.tablut.server.Server run
+WARNING: Chiusura sistema per timeout

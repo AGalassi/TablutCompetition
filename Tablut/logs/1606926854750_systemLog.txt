@@ -1,0 +1,28 @@
+Dec 02, 2020 5:34:14 PM it.unibo.ai.didattica.competition.tablut.server.Server run
+FINE: Accensione server
+Dec 02, 2020 5:34:14 PM it.unibo.ai.didattica.competition.tablut.server.Server run
+FINE: Partita di Tablut
+Dec 02, 2020 5:34:14 PM it.unibo.ai.didattica.competition.tablut.server.Server run
+FINE: Waiting for white connection..
+Dec 02, 2020 5:35:11 PM it.unibo.ai.didattica.competition.tablut.server.Server run
+FINE: White player connected
+Dec 02, 2020 5:35:11 PM it.unibo.ai.didattica.competition.tablut.server.Server run
+FINE: Lettura nome player bianco in corso..
+Dec 02, 2020 5:35:12 PM it.unibo.ai.didattica.competition.tablut.server.Server run
+FINE: White player name:	Serenissim
+Dec 02, 2020 5:35:12 PM it.unibo.ai.didattica.competition.tablut.server.Server run
+FINE: Waiting for Black connection..
+Dec 02, 2020 5:35:46 PM it.unibo.ai.didattica.competition.tablut.server.Server run
+FINE: Accettata connessione con client giocatore Nero
+Dec 02, 2020 5:35:46 PM it.unibo.ai.didattica.competition.tablut.server.Server run
+FINE: Lettura nome player nero in corso..
+Dec 02, 2020 5:35:46 PM it.unibo.ai.didattica.competition.tablut.server.Server run
+FINE: Black player name:	tabloidi
+Dec 02, 2020 5:35:46 PM it.unibo.ai.didattica.competition.tablut.server.Server run
+FINE: Invio messaggio ai giocatori
+Dec 02, 2020 5:35:46 PM it.unibo.ai.didattica.competition.tablut.server.Server run
+FINE: Lettura mossa player W in corso..
+Dec 02, 2020 5:36:41 PM it.unibo.ai.didattica.competition.tablut.server.Server run
+FINE: Move received.	Turn: W Pawn from null to null
+Dec 02, 2020 5:36:41 PM it.unibo.ai.didattica.competition.tablut.server.Server run
+WARNING: Chiusura sistema per troppi errori giocatore bianco
