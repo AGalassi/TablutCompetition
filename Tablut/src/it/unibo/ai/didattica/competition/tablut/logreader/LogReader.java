@@ -99,21 +99,21 @@ public class LogReader {
 							}
 							blackP = temp;
 
-						} else if (line.contains("Turn"))
+						} else if (line.contains("Turn") && !line.contains("checkMove"))
 							turn_counter++;
-						else if (line.contains("bianca rimossa"))
+						else if (line.contains("bianca rimossa") && !line.contains("checkMove"))
 							whitecaptured++;
-						else if (line.contains("nera rimossa"))
+						else if (line.contains("nera rimossa") && !line.contains("checkMove"))
 							blackcaptured++;
-						else if (line.contains("D"))
+						else if (line.contains("D") && !line.contains("checkMove"))
 							ending = Turn.DRAW;
-						else if (line.contains("BW"))
+						else if (line.contains("BW") && !line.contains("checkMove"))
 							ending = Turn.BLACKWIN;
-						else if (line.contains("WW"))
+						else if (line.contains("WW") && !line.contains("checkMove"))
 							ending = Turn.WHITEWIN;
-						else if (line.contains("W"))
+						else if (line.contains("W") && !line.contains("checkMove"))
 							ending = Turn.BLACKWIN;
-						else if (line.contains("B"))
+						else if (line.contains("B") && !line.contains("checkMove"))
 							ending = Turn.WHITEWIN;
 					}
 
