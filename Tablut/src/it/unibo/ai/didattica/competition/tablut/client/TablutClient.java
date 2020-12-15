@@ -12,8 +12,8 @@ import com.google.gson.Gson;
 import it.unibo.ai.didattica.competition.tablut.domain.Action;
 import it.unibo.ai.didattica.competition.tablut.domain.State;
 import it.unibo.ai.didattica.competition.tablut.domain.StateTablut;
+import it.unibo.ai.didattica.competition.tablut.util.Configuration;
 import it.unibo.ai.didattica.competition.tablut.util.StreamUtils;
-import it.unibo.ai.didattica.competition.tablut.server.Server;
 
 /**
  * Classe astratta di un client per il gioco Tablut
@@ -71,10 +71,10 @@ public abstract class TablutClient implements Runnable {
 		this.gson = new Gson();
 		if (player.toLowerCase().equals("white")) {
 			this.player = State.Turn.WHITE;
-			port = Server.whitePort;
+			port = Configuration.whitePort;
 		} else if (player.toLowerCase().equals("black")) {
 			this.player = State.Turn.BLACK;
-			port = Server.blackPort;
+			port = Configuration.blackPort;
 		} else {
 			throw new InvalidParameterException("Player role must be BLACK or WHITE");
 		}

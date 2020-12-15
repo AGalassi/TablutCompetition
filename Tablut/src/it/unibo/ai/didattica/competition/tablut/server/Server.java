@@ -14,6 +14,7 @@ import java.util.logging.*;
 import it.unibo.ai.didattica.competition.tablut.domain.*;
 import it.unibo.ai.didattica.competition.tablut.domain.State.Turn;
 import it.unibo.ai.didattica.competition.tablut.gui.Gui;
+import it.unibo.ai.didattica.competition.tablut.util.Configuration;
 import it.unibo.ai.didattica.competition.tablut.util.StreamUtils;
 
 import com.google.gson.Gson;
@@ -27,9 +28,6 @@ import org.apache.commons.cli.*;
  *
  */
 public class Server implements Runnable {
-
-	public static int whitePort = 5800;
-	public static int blackPort = 5801;
 	
 	/**
 	 * Timeout for waiting for a client to connect
@@ -217,118 +215,6 @@ public class Server implements Runnable {
 			System.out.println( "Unexpected exception:" + exp.getMessage() );
 		}
 
-		/*
-		String usage = "Usage: java Server [-t <time>] [-c <cache>] [-e <errors>] [-s <repeatedState>] [-r <game rules>] [-g <enableGUI>]\n"
-				+ "\tenableGUI must be >0 for enabling it; default 1"
-				+ "\tgame rules must be an integer; 1 for Tablut, 2 for Modern, 3 for Brandub, 4 for Ashton; default: 4\n"
-				+ "\trepeatedStates must be an integer >= 0; default: 0\n"
-				+ "\terrors must be an integer >= 0; default: 0\n"
-				+ "\tcache must be an integer, negative value means infinite; default: infinite\n"
-				+ "time must be an integer (number of seconds); default: 60";
-		for (int i = 0; i < args.length - 1; i++) {
-
-			if (args[i].equals("-t")) {
-				i++;
-				try {
-					time = Integer.parseInt(args[i]);
-					if (time < 1) {
-						System.out.println("Time format not allowed!");
-						System.out.println(args[i]);
-						System.out.println(usage);
-						System.exit(1);
-					}
-				} catch (Exception e) {
-					System.out.println("The time format is not correct!");
-					System.out.println(args[i]);
-					System.out.println(usage);
-					System.exit(1);
-				}
-			}
-
-			if (args[i].equals("-c")) {
-				i++;
-				try {
-					moveCache = Integer.parseInt(args[i]);
-				} catch (Exception e) {
-					System.out.println("Number format is not correct!");
-					System.out.println(args[i]);
-					System.out.println(usage);
-					System.exit(1);
-				}
-			}
-
-			if (args[i].equals("-e")) {
-				i++;
-				try {
-					errors = Integer.parseInt(args[i]);
-					if (errors < 0) {
-						System.out.println("Error format not allowed!");
-						System.out.println(args[i]);
-						System.out.println(usage);
-						System.exit(1);
-					}
-				} catch (Exception e) {
-					System.out.println("The error format is not correct!");
-					System.out.println(args[i]);
-					System.out.println(usage);
-					System.exit(1);
-				}
-
-			}
-			if (args[i].equals("-s")) {
-				i++;
-				try {
-					repeated = Integer.parseInt(args[i]);
-					if (repeated < 0) {
-						System.out.println("RepeatedStates format not allowed!");
-						System.out.println(args[i]);
-						System.out.println(usage);
-						System.exit(1);
-					}
-				} catch (Exception e) {
-					System.out.println("The RepeatedStates format is not correct!");
-					System.out.println(args[i]);
-					System.out.println(usage);
-					System.exit(1);
-				}
-
-			}
-			if (args[i].equals("-r")) {
-				i++;
-				try {
-					gameChosen = Integer.parseInt(args[i]);
-					if (gameChosen < 0 || gameChosen > 4) {
-						System.out.println("Game format not allowed!");
-						System.out.println(args[i]);
-						System.out.println(usage);
-						System.exit(1);
-					}
-				} catch (Exception e) {
-					System.out.println("The game format is not correct!");
-					System.out.println(args[i]);
-					System.out.println(usage);
-					System.exit(1);
-				}
-			}
-
-			if (args[i].equals("-g")) {
-				i++;
-				try {
-					int gui = Integer.parseInt(args[i]);
-					if (gui <= 0) {
-						enableGui = false;
-					}
-				} catch (Exception e) {
-					System.out.println("The enableGUI format is not correct!");
-					System.out.println(args[i]);
-					System.out.println(usage);
-					System.exit(1);
-				}
-			}
-
-		}
-		*/
-
 		// Start the server
 		Server engine = new Server(time, moveCache, errors, repeated, gameChosen, enableGui);
 		engine.run();
@@ -474,8 +360,8 @@ public class Server implements Runnable {
 
 		// ESTABLISH CONNECTIONS AND NAME READING
 		try {
-			this.socketWhite = new ServerSocket(whitePort);
-			this.socketBlack = new ServerSocket(blackPort);
+			this.socketWhite = new ServerSocket(Configuration.whitePort);
+			this.socketBlack = new ServerSocket(Configuration.blackPort);
 			
 
 			// ESTABLISHING CONNECTION
