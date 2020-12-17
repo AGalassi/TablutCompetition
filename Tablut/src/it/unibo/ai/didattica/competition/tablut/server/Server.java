@@ -584,7 +584,8 @@ public class Server implements Runnable {
 						System.out.println("TOO MANY ERRORS FOR BLACK PLAYER; PLAYER WHITE WIN!");
 						e.printStackTrace();
 						loggSys.warning("Chiusura sistema per troppi errori giocatore nero");
-						System.exit(1);
+						state.setTurn(Turn.WHITEWIN);
+						this.game.endGame(state);
 					} else {
 						System.out.println("Error for black player...");
 					}
@@ -595,7 +596,8 @@ public class Server implements Runnable {
 						System.out.println("TOO MANY ERRORS FOR WHITE PLAYER; PLAYER BLACK WIN!");
 						e.printStackTrace();
 						loggSys.warning("Chiusura sistema per troppi errori giocatore bianco");
-						System.exit(1);
+						state.setTurn(Turn.BLACKWIN);
+						this.game.endGame(state);
 					} else {
 						System.out.println("Error for white player...");
 					}
