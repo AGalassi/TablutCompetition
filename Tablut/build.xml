@@ -1,7 +1,7 @@
 <!-- Le istruzioni su come usare ANT per eseguire il progetto, sono incluse nel file
      di README, nella home del progetto -->
 
-<project name="Tablut">
+<project name="Tablut" default="compile">
 
     <target name="clean">
         <delete dir="build"/>
@@ -9,7 +9,7 @@
 
     <target name="compile">
         <mkdir dir="build"/>
-        <javac encoding="iso-8859-1" srcdir="src" destdir="build">
+        <javac encoding="iso-8859-1" srcdir="src" destdir="build" includeantruntime="false">
             <classpath>
                 <pathelement path="lib/gson-2.2.2.jar" />
                 <pathelement path="lib/commons-cli-1.4.jar" />
@@ -29,6 +29,30 @@
             </classpath>
         </java>
     </target>
+
+    <target name="server-jar">
+        <jar destfile="server.jar" filesetmanifest="mergewithoutmain">
+            <manifest>
+                <attribute name="Main-Class" value="it.unibo.ai.didattica.competition.tablut.server.Server"/>
+                <attribute name="Class-Path" value="."/>
+            </manifest>
+            <fileset dir="build"/>
+            <zipfileset excludes="META-INF/*.SF" src="lib/gson-2.2.2.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="lib/commons-cli-1.4.jar"/>
+        </jar>
+    </target>
+    
+    <target name="gui-server">
+        <java classname="it.unibo.ai.didattica.competition.tablut.server.Server" fork="true">
+            <arg value="-g"/>
+            <classpath>
+                <pathelement location="lib/gson-2.2.2.jar"/>
+                <pathelement location="lib/commons-cli-1.4.jar"/>
+                <pathelement location="build"/>
+            </classpath>
+        </java>
+    </target>
+
     <target name="randomwhite">
         <java classname="it.unibo.ai.didattica.competition.tablut.client.TablutRandomWhiteClient" fork="true">
             <classpath>
@@ -37,6 +61,7 @@
             </classpath>
         </java>
     </target>
+
     <target name="randomblack">
         <java classname="it.unibo.ai.didattica.competition.tablut.client.TablutRandomBlackClient" fork="true">
             <classpath>
@@ -45,7 +70,19 @@
             </classpath>
         </java>
     </target>
-	
+
+    <target name="random-jar">
+        <jar destfile="random.jar" filesetmanifest="mergewithoutmain">
+            <manifest>
+                <attribute name="Main-Class" value="it.unibo.ai.didattica.competition.tablut.client.TablutRandomClient"/>
+                <attribute name="Class-Path" value="."/>
+            </manifest>
+            <fileset dir="build"/>
+            <zipfileset excludes="META-INF/*.SF" src="lib/gson-2.2.2.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="lib/commons-cli-1.4.jar"/>
+        </jar>
+    </target>
+
     <target name="humanwhite">
         <java classname="it.unibo.ai.didattica.competition.tablut.client.TablutHumanWhiteClient" fork="true">
             <classpath>
