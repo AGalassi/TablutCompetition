@@ -586,7 +586,7 @@ public class GameAshtonTablut implements Game {
 			}
 			// sono fuori dalle zone del trono
 			if (!state.getBox(a.getRowTo() - 1, a.getColumnTo()).equals("d5")
-					&& !state.getBox(a.getRowTo() - 1, a.getColumnTo()).equals("e4")
+					&& !state.getBox(a.getRowTo() - 1, a.getColumnTo()).equals("e6")
 					&& !state.getBox(a.getRowTo() - 1, a.getColumnTo()).equals("f5")
 					&& !state.getBox(a.getRowTo() - 1, a.getColumnTo()).equals("e5")) {
 				if (state.getPawn(a.getRowTo() - 2, a.getColumnTo()).equalsPawn("B")
