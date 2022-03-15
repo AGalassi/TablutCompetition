@@ -1,3 +1,0 @@
-#!/bin/bash
-
-java -jar /Tablut/RandomPlayer.jar "$1" "$2" "$3"
