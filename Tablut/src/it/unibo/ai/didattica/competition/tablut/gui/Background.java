@@ -3,11 +3,11 @@ package it.unibo.ai.didattica.competition.tablut.gui;
 import java.awt.Graphics;
 import java.awt.Image;
 
-import javax.swing.JFrame;
+import javax.swing.*;
 
 import it.unibo.ai.didattica.competition.tablut.domain.State;
 
-public abstract class Background extends JFrame {
+public abstract class Background extends JPanel {
 	
 	/**
 	 * 
@@ -34,8 +34,8 @@ public abstract class Background extends JFrame {
 	}
 	
 	@Override
-	public void paint( Graphics g ) { 
-	    super.paint(g);
+	public void paintComponent( Graphics g ) {
+	    super.paintComponent(g);
 	    g.drawImage(background, 10, 30, null);
 	    for(int i=0;i<this.aState.getBoard().length;i++)
 	    {

@@ -49,7 +49,7 @@ public class Server implements Runnable {
 	/**
 	 * Whether the gui must be enabled or not
 	 */
-	private boolean enableGui;
+	protected boolean enableGui;
 
 	/**
 	 * JSON string used to communicate
@@ -87,11 +87,11 @@ public class Server implements Runnable {
 
 	private Game game;
 	private Gson gson;
-	private Gui theGui;
+	protected Gui theGui;
 	/**
 	 * Integer that represents the game type
 	 */
-	private int gameC;
+	protected int gameC;
 
 	public Server(int timeout, int cacheSize, int numErrors, int repeated, int game, boolean gui) {
 		this.gameC = game;
@@ -124,6 +124,7 @@ public class Server implements Runnable {
 		int errors = 0;
 		int gameChosen = 4;
 		boolean enableGui = true;
+		String replayFilePath = null;
 
 		CommandLineParser parser = new DefaultParser();
 
@@ -135,6 +136,7 @@ public class Server implements Runnable {
 		options.addOption("s", "repeatedState", true, "repeatedStates must be an integer >= 0; default: 0");
 		options.addOption("r","game rules", true, "game rules must be an integer; 1 for Tablut, 2 for Modern, 3 for Brandub, 4 for Ashton; default: 4");
 		options.addOption("g","enableGUI", false, "enableGUI if option is present");
+		options.addOption("R", "replay", true, "replay mode: specify txt file containing stdout from game and replay the moves");
 
 		HelpFormatter formatter = new HelpFormatter();
 		formatter.printHelp("java Server", options);
@@ -211,12 +213,25 @@ public class Server implements Runnable {
 				enableGui=false;
 			}
 
+			if(cmd.hasOption("R")){
+				replayFilePath = cmd.getOptionValue("R");
+				if (!new File(replayFilePath).exists()) {
+					System.out.println("File '" + replayFilePath + "' doesn't exist!");
+					System.exit(1);
+				}
+			}
+
 		}catch (ParseException exp){
 			System.out.println( "Unexpected exception:" + exp.getMessage() );
 		}
 
 		// Start the server
-		Server engine = new Server(time, moveCache, errors, repeated, gameChosen, enableGui);
+		Server engine;
+		if (replayFilePath == null) {
+			engine = new Server(time, moveCache, errors, repeated, gameChosen, enableGui);
+		} else {
+			engine = new ReplayServer(replayFilePath, moveCache, errors, repeated, gameChosen, enableGui);
+		}
 		engine.run();
 	}
 
