@@ -56,6 +56,8 @@ To be able to run other classes, change the `build.xml` file and re-compile ever
 
 Replay a game using the logfile
 
+Example:
+
 ```
 java -jar .\server.jar -g -R .\logs\PLAYER1_vs_PLAYER2_1652711382324_gameLog.txt
 ```
