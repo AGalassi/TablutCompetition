@@ -50,3 +50,13 @@ ant randomblack
 At this point, a window with the game state should appear.
 
 To be able to run other classes, change the `build.xml` file and re-compile everything
+
+
+## Replay function
+
+Replay a game using the logfile
+
+```
+java -jar .\server.jar -g -R .\logs\PLAYER1_vs_PLAYER2_1652711382324_gameLog.txt
+```
+
