@@ -50,6 +50,23 @@ public abstract class State {
 		private Pawn(String s) {
 			pawn = s;
 		}
+		
+		public static Pawn fromString(String s) {
+			switch (s) {
+			case "O":
+				return Pawn.EMPTY;
+			case "W":
+				return Pawn.WHITE;
+			case "B":
+				return Pawn.EMPTY;
+			case "K":
+				return Pawn.KING;
+			case "T":
+				return Pawn.THRONE;
+			default:
+				return null;
+			}
+		}
 
 		public boolean equalsPawn(String otherPawn) {
 			return (otherPawn == null) ? false : pawn.equals(otherPawn);

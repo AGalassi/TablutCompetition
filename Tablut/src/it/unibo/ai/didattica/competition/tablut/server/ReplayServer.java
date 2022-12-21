@@ -111,12 +111,19 @@ public class ReplayServer extends Server {
 		}
 	}
 
-	protected State getStateFromLines(List<String> lines, State.Turn turn) {
+	protected State getStateFromLines(List<String> lines, State.Turn turn) throws IllegalStateException {
 		State state;
 		switch (this.gameC) {
-			case 1, 2, 4 -> state = new StateTablut();
-			case 3 -> state = new StateBrandub();
-			default -> throw new IllegalStateException("Wrong gameC somehow!");
+			case 1:
+			case 2:
+			case 4:
+				state = new StateTablut();
+				break;
+			case 3:
+				state = new StateBrandub();
+				break;
+			default:
+				throw new IllegalStateException("Wrong gameC somehow!");
 		}
 		State.Pawn[][] board = state.getBoard();
 
