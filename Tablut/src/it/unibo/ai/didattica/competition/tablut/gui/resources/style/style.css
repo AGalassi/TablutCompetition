@@ -1,0 +1,3 @@
+button .cell :disabled {
+	-fx-opacity: 0.8;
+}
