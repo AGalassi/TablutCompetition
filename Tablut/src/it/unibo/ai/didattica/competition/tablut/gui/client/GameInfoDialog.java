@@ -10,7 +10,10 @@ import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.GridPane;
+import javafx.scene.paint.Paint;
+import javafx.scene.text.Font;
 
 /**
  * Class for the Dialog Window that pops up on application start, to enter Game Informations.
@@ -29,9 +32,9 @@ public class GameInfoDialog extends Dialog<GameInfo>{
 		GridPane grid = new GridPane();
 		grid.setHgap(10);
 		grid.setVgap(10);
-		grid.setPadding(new Insets(20, 150, 10, 10));
+		grid.setPadding(new Insets(20, 50, 10, 10));
 		
-		// Add input elements
+		// Input elements
 		TextField textFieldUsername = new TextField();
 		textFieldUsername.setPromptText(GameInfo.DEFAULT_USERNAME + capitalize(GameInfo.DEFAULT_SIDE.name()));
 		ComboBox<String> comboBoxSide = new ComboBox<String>(
@@ -41,16 +44,30 @@ public class GameInfoDialog extends Dialog<GameInfo>{
 		Spinner<Integer> spinnerTimeout = new Spinner<Integer>(GameInfo.MIN_TIMEOUT, GameInfo.MAX_TIMEOUT, GameInfo.DEFAULT_TIMEOUT, GameInfo.TIMEOUT_INCREMENT);
 		spinnerTimeout.setPrefWidth(200.0);
 		TextField textFieldAddress = new TextField();
-		textFieldAddress.setPromptText("127.0.0.1");
+		textFieldAddress.setPromptText(GameInfo.DEFAULT_SERVER_IP);
+		
+		// Error elements
+		Label labelErrorUsername = new Label("Invalid username");
+		labelErrorUsername.setFont(Font.font("System", 16));
+		labelErrorUsername.setTextFill(Paint.valueOf("red"));
+		labelErrorUsername.setTooltip(new Tooltip("Username must be alphanumeric, not shorter than\n3 characters and not longer than 20."));
+		labelErrorUsername.setVisible(false);
+		Label labelErrorAddress = new Label("Invalid IP address");
+		labelErrorAddress.setFont(Font.font("System", 16));
+		labelErrorAddress.setTextFill(Paint.valueOf("red"));
+		labelErrorAddress.setTooltip(new Tooltip("Server Address must be a valid IPv4 address (X.X.X.X)."));
+		labelErrorAddress.setVisible(false);
 		
 		grid.add(new Label("Player name:"), 0, 0);
 		grid.add(textFieldUsername, 1, 0);
+		grid.add(labelErrorUsername, 2, 0);
 		grid.add(new Label("Side:"), 0, 1);
 		grid.add(comboBoxSide, 1, 1);
 		grid.add(new Label("Timeout:"), 0, 2);
 		grid.add(spinnerTimeout, 1, 2);
 		grid.add(new Label("Server address:"), 0, 3);
 		grid.add(textFieldAddress, 1, 3);
+		grid.add(labelErrorAddress, 2, 3);
 		
 		super.getDialogPane().setContent(grid);
 		
@@ -60,15 +77,17 @@ public class GameInfoDialog extends Dialog<GameInfo>{
 		// Do some validation (using the Java 8 lambda syntax).
 		Node confirmButton = super.getDialogPane().lookupButton(ButtonType.OK);
 		textFieldUsername.textProperty().addListener((observable, oldValue, newValue) -> {
-			if(newValue.trim().isEmpty() || GameInfo.PATTERN_USERNAME.matcher(newValue.trim()).matches()) {
+			if(validateUsername(newValue)) {
 				textFieldUsername.setStyle("-fx-border-width: 0px; -fx-focus-color: #039ED3;");
+				labelErrorUsername.setVisible(false);
 			}
 			else {
 				textFieldUsername.setStyle("-fx-text-box-border: red; -fx-focus-color: red;");
+				labelErrorUsername.setVisible(true);
 			}
 			
 			confirmButton.setDisable(
-					(!newValue.trim().isEmpty() && newValue.trim().length() < 3) || newValue.trim().length() > 20);
+					(!validateUsername(newValue)) || !validateServerAddress(textFieldAddress.getText()));
 		});
 		comboBoxSide.getSelectionModel().selectedItemProperty().addListener((options, oldValue, newValue) -> {
 			if(!oldValue.equals(newValue)) {
@@ -76,13 +95,17 @@ public class GameInfoDialog extends Dialog<GameInfo>{
 			}
 		});
 		textFieldAddress.textProperty().addListener((observable, oldValue, newValue) -> {
-			if(newValue.trim().isEmpty() || GameInfo.PATTERN_IP.matcher(newValue.trim()).matches()) {
+			if(validateServerAddress(newValue)) {
 				textFieldAddress.setStyle("-fx-border-width: 0px; -fx-focus-color: #039ED3;");
+				labelErrorAddress.setVisible(false);
 			}
 			else {
 				textFieldAddress.setStyle("-fx-text-box-border: red; -fx-focus-color: red;");
+				labelErrorAddress.setVisible(true);
 			}
-			// check disable
+			
+			confirmButton.setDisable(
+					(!validateUsername(newValue)) || !validateServerAddress(textFieldAddress.getText()));
 		});
 		
 		// Request focus on the username field by default.
@@ -103,6 +126,13 @@ public class GameInfoDialog extends Dialog<GameInfo>{
 		    }
 		    return null;
 		});
+	}
+	
+	private boolean validateUsername(String username) {
+		return username.trim().isEmpty() || GameInfo.PATTERN_USERNAME.matcher(username.trim()).matches();
+	}
+	private boolean validateServerAddress(String address) {
+		return address.isEmpty() || GameInfo.PATTERN_IP.matcher(address).matches();
 	}
 	
     private String capitalize(String s) {

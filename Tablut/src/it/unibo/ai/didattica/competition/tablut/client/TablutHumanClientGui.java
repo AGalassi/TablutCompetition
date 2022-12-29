@@ -50,8 +50,7 @@ public class TablutHumanClientGui extends Application {
 			}
 			e.printStackTrace();
 		}
-	}
-		
+	}	
 	
 	@Override
     public void stop(){
@@ -63,7 +62,8 @@ public class TablutHumanClientGui extends Application {
 
     public static void main(String[] args) {
     	// parse arguments
+    	//if ()
     	
-        launch();
+        launch(); // run the JavaFX thread
     }
 }

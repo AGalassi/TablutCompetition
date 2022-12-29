@@ -20,7 +20,6 @@ import it.unibo.ai.didattica.competition.tablut.exceptions.PawnException;
 import it.unibo.ai.didattica.competition.tablut.exceptions.StopException;
 import it.unibo.ai.didattica.competition.tablut.exceptions.ThroneException;
 import it.unibo.ai.didattica.competition.tablut.gui.Gui;
-import javafx.animation.AnimationTimer;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
@@ -93,7 +92,8 @@ public class Controller extends TablutClient {
 	private int turnCounter = 0;
 	private LocalTime startTime;
 	
-	private AnimationTimer timer;
+	private Timeline timer;
+	private int timeout;
 	
 	public Controller(GameInfo gameInfo) throws UnknownHostException, IOException {
 		super(gameInfo.getSide().name().toUpperCase(), gameInfo.getUsername(), gameInfo.getTimeout(), gameInfo.getServerIP());
@@ -119,16 +119,10 @@ public class Controller extends TablutClient {
 		threadClient = new Thread(this);
 		threadClient.start();
 		
-		/*timer = new AnimationTimer() {
-			private long lastFrame = 0;
-	        @Override
-	        public void handle(long now) {
-	            if ((now - lastFrame)*2 > nbSecPerFrame) {
-	                GameManager.update();
-	                lastFrame = now;
-	            }
-	        }
-		};*/
+		// Setup timer
+		timer = new Timeline(new KeyFrame(javafx.util.Duration.seconds(1), 
+				ae -> timerTick(ae)));
+		timer.setCycleCount(gameInfo.getTimeout()); // Animation.INDEFINITE for a never ending timer
 	}
 	
 	public void initialize() {
@@ -145,7 +139,7 @@ public class Controller extends TablutClient {
 		anchorPaneBoard.getChildren().add(vboxRowCoordinates);
 		anchorPaneBoard.getChildren().add(hboxColCoordinates);
 
-		// init UI
+		// Init UI
 		labelServerIP.setText(" Server IP: " + gameInfo.getServerIP());
 		buttonEnlarge.setId("enlarge");
 		labelPlayerName.setText(gameInfo.getUsername());
@@ -180,8 +174,32 @@ public class Controller extends TablutClient {
 		}
 	}
 	
-	private void updateTimer() {
+	private void startTimer() {
+		labelTimer.setStyle("-fx-text-fill: black");
+		timeout = gameInfo.getTimeout();
+		timer.play();
+	}
+	private void timerTick(ActionEvent event) {
+		timeout--;
 		
+		// Color change
+		if(timeout <= 15)
+			labelTimer.setStyle("-fx-text-fill: rgb(235,180,0)");
+		if(timeout <= 10) 
+			labelTimer.setStyle("-fx-text-fill: rgb(235,120,0)");
+		if(timeout <= 5) 
+			labelTimer.setStyle("-fx-text-fill: red");
+		
+		// update countdown
+		//int min = timeout / 60;
+		//int sec = timeout % 60;
+		//String seconds = sec < 10 ? ("0" + sec) : ("" + sec);
+		//labelTimer.setText("" + min + ":" + seconds);
+		labelTimer.setText(String.format("%02d:%02d", timeout / 60, timeout % 60));
+		
+		if(timeout == 0) {
+			timer.stop();
+		}
 	}
 	
 	private void updateBoard(State state) {
@@ -322,18 +340,18 @@ public class Controller extends TablutClient {
 			stopClient();
 		}
 		
-		Duration elapsedTime = Duration.between(startTime, LocalTime.now());
-		long elapsedSeconds = Math.abs(elapsedTime.getSeconds());
-		String elapsedTimeFormatted = String.format(
-		        "%02d:%02d:%02d",
-		        elapsedSeconds / 3600,
-		        (elapsedSeconds % 3600) / 60,
-		        elapsedSeconds % 60);
-		
 		Platform.runLater(() -> {
 			// Show alert dialog if the game is over
 			if(super.getCurrentState().getTurn().equals(State.Turn.WHITEWIN) ||
 					super.getCurrentState().getTurn().equals(State.Turn.BLACKWIN)) {
+				Duration elapsedTime = Duration.between(startTime, LocalTime.now());
+				long elapsedSeconds = Math.abs(elapsedTime.getSeconds());
+				String elapsedTimeFormatted = String.format(
+				        "%02d:%02d:%02d",
+				        elapsedSeconds / 3600,
+				        (elapsedSeconds % 3600) / 60,
+				        elapsedSeconds % 60);
+				
 				if((super.getCurrentState().getTurn().equals(State.Turn.WHITEWIN) &&
 						gameInfo.getSide().equals(State.Turn.WHITE)) ||
 						(super.getCurrentState().getTurn().equals(State.Turn.BLACKWIN) &&
@@ -359,6 +377,8 @@ public class Controller extends TablutClient {
 			// Increment turn
 			turnCounter += turnIncrement;
 			labelTurn.setText("Turn #" + turnCounter + " (" + super.getCurrentState().getTurn().toString() + ")");
+		
+			startTimer();
 		});
 	}
 	
@@ -495,5 +515,6 @@ public class Controller extends TablutClient {
 	
 	public void stopClient() {
 		clientRunning = false;
+		timer.stop();
 	}
 }

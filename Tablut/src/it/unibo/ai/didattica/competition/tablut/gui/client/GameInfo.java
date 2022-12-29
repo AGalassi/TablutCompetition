@@ -21,7 +21,7 @@ public class GameInfo {
 	public static final String DEFAULT_USERNAME = "Player";
 	public static final State.Turn DEFAULT_SIDE = State.Turn.WHITE;
 	public static final int DEFAULT_TIMEOUT = 60;
-	public static final String DEFAULT_SERVER_IP = "127.0.0.1";
+	public static final String DEFAULT_SERVER_IP = "localhost";
 	
 	private String username = DEFAULT_USERNAME;
 	private State.Turn side = DEFAULT_SIDE;
