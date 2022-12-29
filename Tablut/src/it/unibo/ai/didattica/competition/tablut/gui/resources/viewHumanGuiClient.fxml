@@ -31,7 +31,7 @@
                   <Font size="28.0" />
                </font>
             </Label>
-            <ListView fx:id="listViewActionsHistory" focusTraversable="false" mouseTransparent="true" prefHeight="300.0" prefWidth="450.0" />
+            <ListView fx:id="listViewActionsHistory" focusTraversable="false" prefHeight="300.0" prefWidth="450.0" />
             <Separator prefHeight="20.0" prefWidth="450.0" visible="false" />
             <HBox alignment="CENTER" prefHeight="50.0" prefWidth="450.0">
                <children>
