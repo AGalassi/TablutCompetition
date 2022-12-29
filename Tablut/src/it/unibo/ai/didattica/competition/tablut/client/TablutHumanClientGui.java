@@ -37,7 +37,8 @@ public class TablutHumanClientGui extends Application {
 			FXMLLoader fxmlLoader = new FXMLLoader(Gui.class.getResource("resources/viewHumanGuiClient.fxml"));
 		    controller = new Controller(gameInfo.get());
 		    fxmlLoader.setController(controller);
-		    Scene scene = new Scene(fxmlLoader.load(), 960, 500);
+		    Scene scene = new Scene(fxmlLoader.load(), 464, 500);
+		    scene.getStylesheets().add(Gui.class.getResource("resources/style/style.css").toString());
 		    primaryStage.setTitle("Tablut");
 		    primaryStage.setResizable(false);
 		    primaryStage.setScene(scene);

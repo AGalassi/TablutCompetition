@@ -1,3 +1,12 @@
-button .cell :disabled {
-	-fx-opacity: 0.8;
+.button {
+	-fx-background-size: 30px;
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: 50%;
+}
+
+#enlarge {
+	-fx-background-image: url('../icon-enlarge-dark-100px.png');
+}
+#shrink{
+	-fx-background-image: url('../icon-shrink-dark-100px.png');
 }

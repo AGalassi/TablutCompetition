@@ -9,6 +9,13 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 
+/**
+ * Auxiliary class with methods to build the board coordinates.
+ * 
+ * @author Michele Righi
+ * (<a href="https://github.com/mikyll">GitHub</a>,
+ * <a href="https://www.linkedin.com/in/michele-righi/">LinkedIn</a>)
+ */
 public class BoardCoordinates {
 	public static VBox createVerticalCoordinates(int cellCount, double cellSize, double coordSize) {
 		VBox vboxCoordinates = new VBox();

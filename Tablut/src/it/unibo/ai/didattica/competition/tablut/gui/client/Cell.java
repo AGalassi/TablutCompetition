@@ -3,9 +3,7 @@ package it.unibo.ai.didattica.competition.tablut.gui.client;
 import java.util.function.BiConsumer;
 
 import javafx.scene.Cursor;
-import javafx.scene.control.Label;
 import javafx.scene.effect.DropShadow;
-import javafx.scene.effect.Effect;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
@@ -113,9 +111,5 @@ public class Cell extends ImageView {
 	}
 	public boolean isSelected() {
 		return selected;
-	}
-	
-	private void setGlowing() {
-		
 	}
 }

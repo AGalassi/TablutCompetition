@@ -2,8 +2,8 @@ package it.unibo.ai.didattica.competition.tablut.gui.client;
 
 import java.io.IOException;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.List;
+import java.time.Duration;
+import java.time.LocalTime;
 
 import it.unibo.ai.didattica.competition.tablut.client.TablutClient;
 import it.unibo.ai.didattica.competition.tablut.domain.Action;
@@ -20,10 +20,15 @@ import it.unibo.ai.didattica.competition.tablut.exceptions.PawnException;
 import it.unibo.ai.didattica.competition.tablut.exceptions.StopException;
 import it.unibo.ai.didattica.competition.tablut.exceptions.ThroneException;
 import it.unibo.ai.didattica.competition.tablut.gui.Gui;
+import javafx.animation.AnimationTimer;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.image.Image;
@@ -32,8 +37,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Paint;
-import javafx.scene.shape.Rectangle;
+import javafx.scene.shape.Shape;
+import javafx.stage.Stage;
 
 /**
  * GUI Controller to handle interaction between UI elements and the business logic.
@@ -59,10 +64,11 @@ public class Controller extends TablutClient {
 	private VBox vboxRowCoordinates;
 	private HBox hboxColCoordinates;
 	private Cell[][] cells; // [row][column]
-	private Rectangle horizontalHighlight;
-	private Rectangle verticalHighlight;
 	
 	// UI
+	@FXML private Label labelServerIP;
+	@FXML private Label labelTimer;
+	@FXML private Button buttonEnlarge;
 	@FXML private ListView<String> listViewActionsHistory;
 	@FXML private Label labelPlayerName;
 	@FXML private Label labelPlayerPawn1;
@@ -72,30 +78,30 @@ public class Controller extends TablutClient {
 	@FXML private HBox hboxWaitingOpponent;
 	@FXML private Label labelMoveFrom;
 	@FXML private Label labelMoveTo;
-	@FXML private Label labelServerIP;
 	
 	private GameInfo gameInfo;
 	
 	private Coordinate coordsFrom;
 	private Coordinate coordsTo;
-	private List<Coordinate> allowedDestinations = new ArrayList<Coordinate>();
+	
+	private AllowedMoves allowedMoves;
+	private Shape highlight;
 	
 	private Thread threadClient;
 	private volatile boolean clientRunning = false;
 	private GameAshtonTablut game;
 	private int turnCounter = 0;
+	private LocalTime startTime;
+	
+	private AnimationTimer timer;
 	
 	public Controller(GameInfo gameInfo) throws UnknownHostException, IOException {
 		super(gameInfo.getSide().name().toUpperCase(), gameInfo.getUsername(), gameInfo.getTimeout(), gameInfo.getServerIP());
 		
 		this.gameInfo = gameInfo;
 		
+		// Load images
 		imageBoard = new Image(Gui.class.getResourceAsStream("resources/boardAshton.png"));
-		
-		double boardSize, pawnSize;
-		boardSize = imageBoard.getWidth() - BORDER_WIDTH;
-		pawnSize = boardSize / CELL_COUNT;
-		
 		imageBlackPawn = new Image(Gui.class.getResourceAsStream("resources/black3.png"),
 				CELL_SIZE, CELL_SIZE, false, false);
 		imageWhitePawn = new Image(Gui.class.getResourceAsStream("resources/White2.png"),
@@ -106,18 +112,32 @@ public class Controller extends TablutClient {
 		coordsFrom = new Coordinate();
 		coordsTo = new Coordinate();
 		
-		// create new Game
+		// Create new Game
 		game = new GameAshtonTablut(0, -1, "logs", "white_ai", "black_ai");
 
-		// start client in separate thread
+		// Start client in a separate thread
 		threadClient = new Thread(this);
 		threadClient.start();
+		
+		/*timer = new AnimationTimer() {
+			private long lastFrame = 0;
+	        @Override
+	        public void handle(long now) {
+	            if ((now - lastFrame)*2 > nbSecPerFrame) {
+	                GameManager.update();
+	                lastFrame = now;
+	            }
+	        }
+		};*/
 	}
 	
 	public void initialize() {
-		// init game elements
-		// board
+		// Init board
 		imageViewBoard.setImage(imageBoard);
+		imageViewBoard.setFitWidth(BOARD_SIZE);
+		imageViewBoard.setFitHeight(BOARD_SIZE);
+		imageViewBoard.setPreserveRatio(true);
+		
 		vboxRowCoordinates = BoardCoordinates.createVerticalCoordinates(CELL_COUNT, CELL_SIZE, 30.0);
 		vboxRowCoordinates.setLayoutX(BOARD_SIZE);
 		hboxColCoordinates = BoardCoordinates.createHorizontalCoordinates(CELL_COUNT, CELL_SIZE, 30.0);
@@ -126,6 +146,8 @@ public class Controller extends TablutClient {
 		anchorPaneBoard.getChildren().add(hboxColCoordinates);
 
 		// init UI
+		labelServerIP.setText(" Server IP: " + gameInfo.getServerIP());
+		buttonEnlarge.setId("enlarge");
 		labelPlayerName.setText(gameInfo.getUsername());
 		labelTurn.setText("Turn #" + turnCounter + " (" + State.Turn.WHITE.toString() + ")");
 		if(gameInfo.getSide().equals(State.Turn.WHITE)) {
@@ -134,7 +156,6 @@ public class Controller extends TablutClient {
 		} else {
 			labelPlayerPawn1.setGraphic(new ImageView(imageBlackPawn));
 		}
-		labelServerIP.setText(" Server IP: " + gameInfo.getServerIP());
 		
 		resetMove();
 	}
@@ -144,6 +165,23 @@ public class Controller extends TablutClient {
 		coordsTo.reset();
 		labelMoveFrom.setText("");
 		labelMoveTo.setText("");
+	}
+	
+	@FXML private void toggleEnlarge(ActionEvent event) {
+		Stage stage = (Stage) buttonEnlarge.getScene().getWindow();
+		
+		if(stage.getWidth() < 500) {
+			stage.setWidth(978);
+			buttonEnlarge.setId("shrink");
+		}
+		else {
+			stage.setWidth(482);
+			buttonEnlarge.setId("enlarge");
+		}
+	}
+	
+	private void updateTimer() {
+		
 	}
 	
 	private void updateBoard(State state) {
@@ -196,7 +234,7 @@ public class Controller extends TablutClient {
 		labelMoveFrom.setText("" + chCol + (row+1));
 		labelMoveTo.setText("");
 		
-		highlightAllowedMoves(row, col, Paint.valueOf("lime"));
+		highlightAllowedMoves(row, col);
 	}
 	
 	private void deselectPawn() {
@@ -206,122 +244,26 @@ public class Controller extends TablutClient {
 		
 		resetMove();
 		
-		allowedDestinations.clear();
-		
-		if(horizontalHighlight != null && verticalHighlight != null) {
-			anchorPaneBoard.getChildren().remove(horizontalHighlight);
-			anchorPaneBoard.getChildren().remove(verticalHighlight);
+		// Reset allowed moves
+		if(allowedMoves != null && highlight != null) {
+			anchorPaneBoard.getChildren().remove(highlight);
+			allowedMoves.getAllowedDestinations().clear();
 			
-			horizontalHighlight = null;
-			verticalHighlight = null;
+			allowedMoves = null;
+			highlight = null;
 		}
 	}
-	
-	/**
-	 * Create 2 shapes that highlight the allowed moves only (the cells where the user can move the selected pawn).
-	 * @param row represents the row (number) of the selected cell
-	 * @param col represents the column (letter) of the selected cell
-	 * 
-	 * @comment la catena di AND/OR nell'if fa abbastanza schifo,
-	 * se qualcuno dovesse trovare una soluzione migliore e' liberissimo di modificarlo :)
-	 */
-	private void highlightAllowedMoves(int row, int col, Paint color) {
-		int yVerRect = row;
-		int xHorRect = col;
-		int heightVerRect = 1;
-		int widthHorRect = 1;
-		
-		// vertical (same col): top ^
-		for(int y = row-1; y >= 0; y--) {
-			if (col == 0 && y == 5 ||
-					col == 1 && y == 4 ||
-					col == 3 && y == 0 ||
-					col == 4 && (y == 4 || y == 1) ||
-					col == 5 && y == 0 ||
-					col == 7 && y == 4 ||
-					col == 8 && y == 5)
-				break;
-			if(super.getCurrentState().getPawn(y, col).equalsPawn("O")) {
-				heightVerRect++;
-				yVerRect--;
-				allowedDestinations.add(new Coordinate(y, col));
-			}
-			else break;
-		}
-		// vertical (same col): bottom v
-		for(int y = row+1; y < super.getCurrentState().getBoard().length; y++) {
-			if (col == 0 && y == 3 ||
-					col == 1 && y == 4 ||
-					col == 3 && y == 8 ||
-					col == 4 && (y == 4 || y == 7) ||
-					col == 5 && y == 8 ||
-					col == 7 && y == 4 ||
-					col == 8 && y == 3)
-				break;
-			if(super.getCurrentState().getPawn(y, col).equalsPawn("O")) {
-				heightVerRect++;
-				allowedDestinations.add(new Coordinate(y, col));
-			}
-			else break;
-		}
-		// horizontal (same row): left <-
-		for(int x = col-1; x >= 0; x--) {
-			if (row == 0 && x == 5 ||
-					row == 1 && x == 4 ||
-					row == 3 && x == 0 ||
-					row == 4 && (x == 4 || x == 1) ||
-					row == 5 && x == 0 ||
-					row == 7 && x == 4 ||
-					row == 8 && x == 5) 
-				break;
-			if(super.getCurrentState().getPawn(row, x).equalsPawn("O")) {
-				widthHorRect++;
-				xHorRect--;
-				allowedDestinations.add(new Coordinate(row, x));
-			}
-			else break;
-		}
-		// horizontal (same row): right ->
-		for(int x = col+1; x < super.getCurrentState().getBoard().length; x++) {
-			if (row == 0 && x == 3 ||
-					row == 1 && x == 4 ||
-					row == 3 && x == 8 ||
-					row == 4 && (x == 4 || x == 7) ||
-					row == 5 && x == 8 ||
-					row == 7 && x == 4 ||
-					row == 8 && x == 3)
-				break;
-			if(super.getCurrentState().getPawn(row, x).equalsPawn("O")) {
-				widthHorRect++;
-				allowedDestinations.add(new Coordinate(row, x));
-			}
-			else break;
-		}
-		
-		verticalHighlight = new Rectangle();
-		verticalHighlight.setFill(color);
-		verticalHighlight.setWidth(CELL_SIZE);
-		verticalHighlight.setHeight(CELL_SIZE * heightVerRect);
-		verticalHighlight.setLayoutX(BORDER_WIDTH + col * CELL_SIZE);
-		verticalHighlight.setLayoutY(BORDER_WIDTH + yVerRect * CELL_SIZE);
-		verticalHighlight.setMouseTransparent(true);
-		verticalHighlight.setOpacity(0.5);
-		
-		horizontalHighlight = new Rectangle();
-		horizontalHighlight.setFill(color);
-		horizontalHighlight.setWidth(CELL_SIZE * widthHorRect);
-		horizontalHighlight.setHeight(CELL_SIZE);
-		horizontalHighlight.setLayoutX(BORDER_WIDTH + xHorRect * CELL_SIZE);
-		horizontalHighlight.setLayoutY(BORDER_WIDTH + row * CELL_SIZE);
-		horizontalHighlight.setMouseTransparent(true);
-		horizontalHighlight.setOpacity(0.5);
-		
-		anchorPaneBoard.getChildren().add(1, verticalHighlight);
-		anchorPaneBoard.getChildren().add(1, horizontalHighlight);
+
+	private void highlightAllowedMoves(int row, int col) {
+		allowedMoves = new AllowedMoves(super.getCurrentState(), row, col, CELL_SIZE);
+		highlight = allowedMoves.getHighlight(BORDER_WIDTH);
+		anchorPaneBoard.getChildren().add(1, highlight);
 	}
 	
 	private boolean isDestinationAllowed(int row, int col) {
-		return allowedDestinations.contains(new Coordinate(row, col));
+		if(allowedMoves == null)
+			return false;
+		return allowedMoves.getAllowedDestinations().contains(new Coordinate(row, col));
 	}
 	
 	/**
@@ -331,20 +273,20 @@ public class Controller extends TablutClient {
 		try {
 			Action a = new Action(getCoordsString(coordsFrom), getCoordsString(coordsTo), super.getCurrentState().getTurn());
 			
-			// check if move is possible and get the updated state
+			// Check if move is possible and get the updated state
 			super.setCurrentState(game.checkMove(super.getCurrentState(), a));
 			
-			// update board with new state
+			// Update board with new state
 			updateBoard(super.getCurrentState());
 			
-			// send action to the server
+			// Send action to the server
 			this.write(a);
 			
 			addToHistory(a);
 			
     		if(!super.getCurrentState().getTurn().equals(State.Turn.WHITEWIN) &&
     				!super.getCurrentState().getTurn().equals(State.Turn.BLACKWIN)) {
-    			nextTurn();
+    			nextTurn(0);
     		}
 		} catch (ClassNotFoundException | IOException e) {
 			e.printStackTrace();
@@ -359,30 +301,37 @@ public class Controller extends TablutClient {
 	
 	private void addToHistory(Action a) {
 		Platform.runLater(() -> {
-			String entry = "";
+			String entry = "Turn #" + turnCounter + ": ";
 		
-			if(super.getCurrentState().getTurn().equals(gameInfo.getSide())) {
+			if(!super.getCurrentState().getTurn().equals(gameInfo.getSide())) {
 				entry += gameInfo.getUsername();
 			}
 			else {
 				entry += "Player" + gameInfo.getOpponentSideString();
 			}
-			entry += " moved " + a.getFrom() + " to " + a.getTo();
+			entry += " moved from " + a.getFrom().toUpperCase() + " to " + a.getTo().toUpperCase();
 			
 			listViewActionsHistory.getItems().add(entry);
 		});
 	}
 	
-	private void nextTurn() {
+	private void nextTurn(int turnIncrement) {
+		// Stop the client if the game is over
 		if(super.getCurrentState().getTurn().equals(State.Turn.WHITEWIN) ||
 				super.getCurrentState().getTurn().equals(State.Turn.BLACKWIN)) {
 			stopClient();
 		}
 		
+		Duration elapsedTime = Duration.between(startTime, LocalTime.now());
+		long elapsedSeconds = Math.abs(elapsedTime.getSeconds());
+		String elapsedTimeFormatted = String.format(
+		        "%02d:%02d:%02d",
+		        elapsedSeconds / 3600,
+		        (elapsedSeconds % 3600) / 60,
+		        elapsedSeconds % 60);
+		
 		Platform.runLater(() -> {
-			// disable if not player's turn
-			//anchorPaneBoard.setDisable(!super.getCurrentState().getTurn().equals(gameInfo.getSide()));
-			
+			// Show alert dialog if the game is over
 			if(super.getCurrentState().getTurn().equals(State.Turn.WHITEWIN) ||
 					super.getCurrentState().getTurn().equals(State.Turn.BLACKWIN)) {
 				if((super.getCurrentState().getTurn().equals(State.Turn.WHITEWIN) &&
@@ -390,21 +339,26 @@ public class Controller extends TablutClient {
 						(super.getCurrentState().getTurn().equals(State.Turn.BLACKWIN) &&
 								gameInfo.getSide().equals(State.Turn.BLACK))) {
 					alert(AlertType.INFORMATION, "Game Over", "You won!",
-							"Winner: " + gameInfo.getUsername() + " (" + gameInfo.getSideString() + ")" + "\nTurns: " + turnCounter);
+							"Winner: " + gameInfo.getUsername() + " (" + gameInfo.getSideString() + ")" +
+							"\nTurns: " + turnCounter +
+							"\nTime elapsed: " + elapsedTimeFormatted);
 				}
 				else {
 					alert(AlertType.INFORMATION, "Game Over", "You lost!",
-							"Winner: Player" + gameInfo.getOpponentSideString() + "\nTurns: " + turnCounter);
+							"Winner: Player" + gameInfo.getOpponentSideString() +
+							"\nTurns: " + turnCounter +
+							"\nTime elapsed: " + elapsedTimeFormatted);
 				}
 				System.exit(0);
 			}
 			
-			// update UI
+			// Update UI
 			hboxMyTurn.setVisible(super.getCurrentState().getTurn().equals(gameInfo.getSide()));
 			hboxWaitingOpponent.setVisible(!super.getCurrentState().getTurn().equals(gameInfo.getSide()));
 			
-			// increment turn
-			labelTurn.setText("Turn #" + (++turnCounter) + " (" + super.getCurrentState().getTurn().toString() + ")");
+			// Increment turn
+			turnCounter += turnIncrement;
+			labelTurn.setText("Turn #" + turnCounter + " (" + super.getCurrentState().getTurn().toString() + ")");
 		});
 	}
 	
@@ -435,6 +389,13 @@ public class Controller extends TablutClient {
 		return "" + col + row;
 	}
 	
+	/**
+	 * Obtain an action comparing two states
+	 * @param oldState the state before the action
+	 * @param newState the state after the action
+	 * @return the action performed to obtain newState
+	 * @throws IOException
+	 */
 	private Action obtainAction(State oldState, State newState) throws IOException {
 		String from = "", to = "";
 		for(int row = 0; row < oldState.getBoard().length; row++) {
@@ -444,11 +405,38 @@ public class Controller extends TablutClient {
 					char chCol = (char) (row + 97);
 					to = "" + chCol + row + 1;
 					
+					System.out.println("TO: " + to); // test
+					
 					// get turn
+					// TO-DO: obtain the "to" coordinates
+					// check if surrounding contains an eaten pawn ?
+					// <-
+					if(row > 0) {
+						
+					}
 				}
 			}
 		}
 		return new Action(from, to, oldState.getTurn());
+	}
+	private void tmpOpponentAddToHistory(State oldState, State newState) {
+		if(super.getCurrentState().getTurn().equals(gameInfo.getSide())) {
+			Platform.runLater(() -> {
+				String to = "Turn #" + turnCounter + ": Player" + gameInfo.getOpponentSideString() + " moved to ";
+				for(int row = 0; row < oldState.getBoard().length; row++) {
+					for(int col = 0; col < oldState.getBoard().length; col++) {
+						if(oldState.getBoard()[row][col].equals(State.Pawn.EMPTY) &&
+								!newState.getBoard()[row][col].equals(State.Pawn.EMPTY)) {
+							char chCol = (char) (row + 65);
+							to += "" + chCol + (row+1);
+							
+							break;
+						}
+					}
+				}
+				listViewActionsHistory.getItems().add(to);
+			});
+		}
 	}
 	
 	public static void alert(AlertType type, String title, String headerMessage, String contentMessage) {
@@ -475,19 +463,25 @@ public class Controller extends TablutClient {
         	while(clientRunning) {
         		State oldState = this.getCurrentState();
         		
-        		// read new state from the server
+        		// Read a new state from the server
         		this.read();
+        		if(startTime == null) 
+        			startTime = LocalTime.now();
         		
         		State newState = this.getCurrentState();
-        		// Action opponentAction = make a method to calculate the action comparing 2 states
         		
-        		// update
+        		// Update board UI
         		updateBoard(newState);
         		
-        		nextTurn();
+        		// Add to history
+        		// TO-DO: addToHistory(obtainAction(oldState, newState));
+        		// Temporary solution (only destination)
+        		if(turnCounter != 0 && !(turnCounter == 1 && gameInfo.getSide().equals(State.Turn.WHITE))) {
+        			System.out.println("test" + turnCounter + " - " + gameInfo.getSide());
+        			tmpOpponentAddToHistory(oldState, newState);
+        		}
         		
-        		// add to history
-        		//addToHistory(obtainAction(oldState, newState));
+        		nextTurn(1);
         		
         		try {
     				Thread.sleep(1000);
