@@ -5,7 +5,6 @@ import java.net.UnknownHostException;
 
 public class TablutHumanBlackClientGui {
 	public static void main(String[] args) throws UnknownHostException, ClassNotFoundException, IOException {
-		String[] array = new String[]{"BLACK"};
-		TablutHumanClient.main(array);
+		TablutHumanClientGui.main(new String[]{"Black", "BlackP", "60", "localhost"});
 	}
 }

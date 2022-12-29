@@ -1,5 +1,6 @@
 package it.unibo.ai.didattica.competition.tablut.gui.client;
 
+import it.unibo.ai.didattica.competition.tablut.domain.State;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.geometry.Insets;
@@ -23,7 +24,23 @@ import javafx.scene.text.Font;
  * <a href="https://www.linkedin.com/in/michele-righi/">LinkedIn</a>)
  */
 public class GameInfoDialog extends Dialog<GameInfo>{
+	
 	public GameInfoDialog(String title, String headerText) {
+		this(title, headerText, GameInfo.DEFAULT_SIDE, "", GameInfo.DEFAULT_TIMEOUT, "");
+	}
+	public GameInfoDialog(String title, String headerText, String side) {
+		this(title, headerText, StringUtils.parseSide(side), "", GameInfo.DEFAULT_TIMEOUT, "");
+	}
+	public GameInfoDialog(String title, String headerText, String side, String username) {
+		this(title, headerText, StringUtils.parseSide(side), username, GameInfo.DEFAULT_TIMEOUT, "");
+	}
+	public GameInfoDialog(String title, String headerText, String side, String username, String timeout) {
+		this(title, headerText, StringUtils.parseSide(side), username, StringUtils.parseInteger(timeout), "");
+	}
+	public GameInfoDialog(String title, String headerText, String side, String username, String timeout, String serverAddress) {
+		this(title, headerText, StringUtils.parseSide(side), username, StringUtils.parseInteger(timeout), serverAddress);
+	}
+	public GameInfoDialog(String title, String headerText, State.Turn side, String username, int timeout, String serverAddress) {
 		super();
 		super.setTitle(title);
 		super.setHeaderText(headerText);
@@ -35,15 +52,15 @@ public class GameInfoDialog extends Dialog<GameInfo>{
 		grid.setPadding(new Insets(20, 50, 10, 10));
 		
 		// Input elements
-		TextField textFieldUsername = new TextField();
-		textFieldUsername.setPromptText(GameInfo.DEFAULT_USERNAME + capitalize(GameInfo.DEFAULT_SIDE.name()));
 		ComboBox<String> comboBoxSide = new ComboBox<String>(
 				FXCollections.observableArrayList("Black", "White"));
-		comboBoxSide.setValue(capitalize(GameInfo.DEFAULT_SIDE.name()));
+		comboBoxSide.setValue(StringUtils.capitalize(side.name()));
 		comboBoxSide.setPrefWidth(200.0);
-		Spinner<Integer> spinnerTimeout = new Spinner<Integer>(GameInfo.MIN_TIMEOUT, GameInfo.MAX_TIMEOUT, GameInfo.DEFAULT_TIMEOUT, GameInfo.TIMEOUT_INCREMENT);
+		TextField textFieldUsername = new TextField(username);
+		textFieldUsername.setPromptText(GameInfo.DEFAULT_USERNAME + StringUtils.capitalize(GameInfo.DEFAULT_SIDE.name()));
+		Spinner<Integer> spinnerTimeout = new Spinner<Integer>(GameInfo.MIN_TIMEOUT, GameInfo.MAX_TIMEOUT, timeout, GameInfo.TIMEOUT_INCREMENT);
 		spinnerTimeout.setPrefWidth(200.0);
-		TextField textFieldAddress = new TextField();
+		TextField textFieldAddress = new TextField(serverAddress);
 		textFieldAddress.setPromptText(GameInfo.DEFAULT_SERVER_IP);
 		
 		// Error elements
@@ -58,11 +75,11 @@ public class GameInfoDialog extends Dialog<GameInfo>{
 		labelErrorAddress.setTooltip(new Tooltip("Server Address must be a valid IPv4 address (X.X.X.X)."));
 		labelErrorAddress.setVisible(false);
 		
-		grid.add(new Label("Player name:"), 0, 0);
-		grid.add(textFieldUsername, 1, 0);
-		grid.add(labelErrorUsername, 2, 0);
-		grid.add(new Label("Side:"), 0, 1);
-		grid.add(comboBoxSide, 1, 1);
+		grid.add(new Label("Side:"), 0, 0);
+		grid.add(comboBoxSide, 1, 0);
+		grid.add(new Label("Player name:"), 0, 1);
+		grid.add(textFieldUsername, 1, 1);
+		grid.add(labelErrorUsername, 2, 1);
 		grid.add(new Label("Timeout:"), 0, 2);
 		grid.add(spinnerTimeout, 1, 2);
 		grid.add(new Label("Server address:"), 0, 3);
@@ -76,8 +93,13 @@ public class GameInfoDialog extends Dialog<GameInfo>{
 		
 		// Do some validation (using the Java 8 lambda syntax).
 		Node confirmButton = super.getDialogPane().lookupButton(ButtonType.OK);
+		comboBoxSide.getSelectionModel().selectedItemProperty().addListener((options, oldValue, newValue) -> {
+			if(!oldValue.equals(newValue)) {
+				textFieldUsername.setPromptText(GameInfo.DEFAULT_USERNAME + newValue);
+			}
+		});
 		textFieldUsername.textProperty().addListener((observable, oldValue, newValue) -> {
-			if(validateUsername(newValue)) {
+			if(GameInfo.validateUsername(newValue)) {
 				textFieldUsername.setStyle("-fx-border-width: 0px; -fx-focus-color: #039ED3;");
 				labelErrorUsername.setVisible(false);
 			}
@@ -87,15 +109,11 @@ public class GameInfoDialog extends Dialog<GameInfo>{
 			}
 			
 			confirmButton.setDisable(
-					(!validateUsername(newValue)) || !validateServerAddress(textFieldAddress.getText()));
-		});
-		comboBoxSide.getSelectionModel().selectedItemProperty().addListener((options, oldValue, newValue) -> {
-			if(!oldValue.equals(newValue)) {
-				textFieldUsername.setPromptText(GameInfo.DEFAULT_USERNAME + newValue);
-			}
+					(!(newValue.trim().isEmpty() || GameInfo.validateUsername(newValue)) ||
+					!(textFieldAddress.getText().isEmpty() || GameInfo.validateServerAddress(textFieldAddress.getText()))));
 		});
 		textFieldAddress.textProperty().addListener((observable, oldValue, newValue) -> {
-			if(validateServerAddress(newValue)) {
+			if(GameInfo.validateServerAddress(newValue)) {
 				textFieldAddress.setStyle("-fx-border-width: 0px; -fx-focus-color: #039ED3;");
 				labelErrorAddress.setVisible(false);
 			}
@@ -105,7 +123,10 @@ public class GameInfoDialog extends Dialog<GameInfo>{
 			}
 			
 			confirmButton.setDisable(
-					(!validateUsername(newValue)) || !validateServerAddress(textFieldAddress.getText()));
+					(!(textFieldUsername.getText().trim().isEmpty() || GameInfo.validateUsername(textFieldUsername.getText())) ||
+					!(newValue.isEmpty() || GameInfo.validateServerAddress(newValue))));
+			confirmButton.setDisable(
+					(!GameInfo.validateUsername(newValue)) || !GameInfo.validateServerAddress(textFieldAddress.getText()));
 		});
 		
 		// Request focus on the username field by default.
@@ -114,28 +135,19 @@ public class GameInfoDialog extends Dialog<GameInfo>{
 		// Convert the result to a GameInfo object when the login button is clicked.
 		super.setResultConverter(dialogButton -> {
 		    if (dialogButton == ButtonType.OK) {
-		    	String username = textFieldUsername.getText().trim();
-		    	if(username.isEmpty()) {
-		    		username = textFieldUsername.getPromptText();
+		    	String resUsername = textFieldUsername.getText().trim();
+		    	if(resUsername.isEmpty()) {
+		    		resUsername = textFieldUsername.getPromptText();
 		    	}
-		    	String serverIP = textFieldAddress.getText().trim();
-		    	if(serverIP.isEmpty()) {
-		    		serverIP = textFieldAddress.getPromptText();
+		    	String resServerIP = textFieldAddress.getText().trim();
+		    	if(resServerIP.isEmpty()) {
+		    		resServerIP = textFieldAddress.getPromptText();
 		    	}
-		        return new GameInfo(username, comboBoxSide.getValue(), spinnerTimeout.getValue(), serverIP);
+		        return new GameInfo(comboBoxSide.getValue(), resUsername, spinnerTimeout.getValue(), resServerIP);
 		    }
 		    return null;
 		});
 	}
 	
-	private boolean validateUsername(String username) {
-		return username.trim().isEmpty() || GameInfo.PATTERN_USERNAME.matcher(username.trim()).matches();
-	}
-	private boolean validateServerAddress(String address) {
-		return address.isEmpty() || GameInfo.PATTERN_IP.matcher(address).matches();
-	}
-	
-    private String capitalize(String s) {
-    	return s.substring(0,1).toUpperCase() + s.substring(1).toLowerCase();
-    }
+
 }

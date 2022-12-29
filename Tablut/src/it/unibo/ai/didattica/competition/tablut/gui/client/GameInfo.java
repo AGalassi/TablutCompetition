@@ -29,51 +29,45 @@ public class GameInfo {
 	private String serverIP = DEFAULT_SERVER_IP;
 	
 	public GameInfo() {
-		this(DEFAULT_USERNAME + DEFAULT_SIDE.name().substring(0,1).toUpperCase() + DEFAULT_SIDE.name().substring(1).toLowerCase(),
-				DEFAULT_SIDE, DEFAULT_TIMEOUT, DEFAULT_SERVER_IP);
+		this(DEFAULT_SIDE, DEFAULT_USERNAME + StringUtils.capitalize(DEFAULT_SIDE.name()), DEFAULT_TIMEOUT, DEFAULT_SERVER_IP);
 	}
-	public GameInfo(String username) {
-		this(username, DEFAULT_SIDE, DEFAULT_TIMEOUT, DEFAULT_SERVER_IP);
+	public GameInfo(String side) {
+		this(StringUtils.parseSide(side), DEFAULT_USERNAME + side, DEFAULT_TIMEOUT, DEFAULT_SERVER_IP);
 	}
-	public GameInfo(String username, String side) {
-		this(username, side.equalsIgnoreCase("White") ? State.Turn.WHITE : State.Turn.BLACK, DEFAULT_TIMEOUT, DEFAULT_SERVER_IP);
+	public GameInfo(String side, String username) {
+		this(StringUtils.parseSide(side), username, DEFAULT_TIMEOUT, DEFAULT_SERVER_IP);
 	}
-	public GameInfo(String username, State.Turn side) {
-		this(username, side, DEFAULT_TIMEOUT, DEFAULT_SERVER_IP);
+	public GameInfo(State.Turn side, String username) {
+		this(side, username, DEFAULT_TIMEOUT, DEFAULT_SERVER_IP);
 	}
-	public GameInfo(String username, String side, int timeout, String serverIP) {
-		this(username, side.equalsIgnoreCase("White") ? State.Turn.WHITE : State.Turn.BLACK, timeout, serverIP);
+	public GameInfo(State.Turn side, String username, String timeout, String serverIP) {
+		this(side, username, StringUtils.parseInteger(timeout), serverIP);
 	}
-	public GameInfo(String username, State.Turn side, int timeout, String serverIP) {
-		if(username.length() < 3 || username.length() > 20) {
-			username = DEFAULT_USERNAME;
-		}
-		if(!side.equals(State.Turn.WHITE) && !side.equals(State.Turn.BLACK)) {
+	public GameInfo(String side, String username, String timeout, String serverIP) {
+		this(StringUtils.parseSide(side), username, StringUtils.parseInteger(timeout), serverIP);
+	}
+	public GameInfo(String side, String username, int timeout, String serverIP) {
+		this(StringUtils.parseSide(side), username, timeout, serverIP);
+	}
+	public GameInfo(State.Turn side, String username, int timeout, String serverIP) {
+		if(!validateSide(side)) {
 			side = DEFAULT_SIDE;
 		}
-		if(timeout < MIN_TIMEOUT || timeout > MAX_TIMEOUT) {
+		if(!validateUsername(username) && !username.trim().isEmpty()) {
+			username = DEFAULT_USERNAME + getSideString();
+		}
+		if(!validateTimeout(timeout)) {
 			timeout = DEFAULT_TIMEOUT;
 		}
-		if(!PATTERN_IP.matcher(serverIP.trim()).matches() && !serverIP.trim().isEmpty()) {
+		if(!validateServerAddress(serverIP) && !serverIP.isEmpty()) {
 			serverIP = DEFAULT_SERVER_IP;
 		}
-		this.username = username;
 		this.side = side;
+		this.username = username;
 		this.timeout = timeout;
 		this.serverIP = serverIP;
 	}
 	
-	
-	public String getUsername() {
-		return username;
-	}
-	public void setUsername(String username) {
-		if(username.length() < 3 || username.length() > 20) {
-			username = DEFAULT_USERNAME;
-		} else {
-			this.username = username;
-		}
-	}
 	public State.Turn getSide() {
 		return side;
 	}
@@ -81,17 +75,27 @@ public class GameInfo {
 		return side.equals(State.Turn.BLACK) ? State.Turn.WHITE : State.Turn.BLACK;
 	}
 	public void setSide(State.Turn side) {
-		if(!side.equals(State.Turn.WHITE) && !side.equals(State.Turn.BLACK)) {
+		if(!validateSide(side)) {
 			side = DEFAULT_SIDE;
 		} else {
 			this.side = side;
+		}
+	}
+	public String getUsername() {
+		return username;
+	}
+	public void setUsername(String username) {
+		if(!validateUsername(username) && !username.trim().isEmpty()) {
+			username = DEFAULT_USERNAME;
+		} else {
+			this.username = username;
 		}
 	}
 	public int getTimeout() {
 		return timeout;
 	}
 	public void setTimeout(int timeout) {
-		if(timeout < 5 || timeout > 120) {
+		if(!validateTimeout(timeout)) {
 			timeout = DEFAULT_TIMEOUT;
 		} else {
 			this.timeout = timeout;
@@ -101,7 +105,7 @@ public class GameInfo {
 		return serverIP;
 	}
 	public void setServerIP(String serverIP) {
-		if(!PATTERN_IP.matcher(serverIP.trim()).matches() && !serverIP.trim().isEmpty()) {
+		if(!validateServerAddress(serverIP) && !serverIP.isEmpty()) {
 			serverIP = DEFAULT_SERVER_IP;
 		} else {
 			this.serverIP = serverIP;
@@ -109,9 +113,27 @@ public class GameInfo {
 	}
 	
 	public String getSideString() {
-		return side.name().substring(0,1).toUpperCase() + side.name().substring(1).toLowerCase();
+		return StringUtils.capitalize(side.name());
 	}
 	public String getOpponentSideString() {
-		return getOpponentSide().name().substring(0,1).toUpperCase() + getOpponentSide().name().substring(1).toLowerCase();
+		return StringUtils.capitalize(getOpponentSide().name());
+	}
+	public static boolean validateSide(State.Turn side) {
+		return side.equals(State.Turn.WHITE) || side.equals(State.Turn.BLACK);
+	}
+	public static boolean validateSide(String side) {
+		return side.equalsIgnoreCase("White") || side.equalsIgnoreCase("Black");
+	}
+	public static boolean validateUsername(String username) {
+		return PATTERN_USERNAME.matcher(username.trim()).matches();
+	}
+	public static boolean validateTimeout(int timeout) {
+		return MIN_TIMEOUT <= timeout && timeout <= MAX_TIMEOUT;
+	}
+	public static boolean validateTimeout(String timeout) {
+		return StringUtils.isNumeric(timeout) && MIN_TIMEOUT <= StringUtils.parseInteger(timeout) && StringUtils.parseInteger(timeout) <= MAX_TIMEOUT;
+	}
+	public static boolean validateServerAddress(String address) {
+		return PATTERN_IP.matcher(address).matches() || address.equals("localhost");
 	}
 }

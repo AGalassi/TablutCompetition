@@ -161,7 +161,8 @@ public class Controller extends TablutClient {
 		labelMoveTo.setText("");
 	}
 	
-	@FXML private void toggleEnlarge(ActionEvent event) {
+	@FXML
+	private void toggleEnlarge(ActionEvent event) {
 		Stage stage = (Stage) buttonEnlarge.getScene().getWindow();
 		
 		if(stage.getWidth() < 500) {
@@ -471,6 +472,12 @@ public class Controller extends TablutClient {
 	public void run() {
 		clientRunning = true;
 		
+		System.out.println("Client created:"
+				+ "\nPlayer: " + gameInfo.getSideString()
+				+ "\nUsername: " + gameInfo.getUsername()
+				+ "\nTimeout: " + gameInfo.getTimeout()
+				+ "\nServerIP: " + gameInfo.getServerIP());
+		
 		// Send name to the server
         try {
             super.declareName();
@@ -497,7 +504,6 @@ public class Controller extends TablutClient {
         		// TO-DO: addToHistory(obtainAction(oldState, newState));
         		// Temporary solution (only destination)
         		if(turnCounter != 0 && !(turnCounter == 1 && gameInfo.getSide().equals(State.Turn.WHITE))) {
-        			System.out.println("test" + turnCounter + " - " + gameInfo.getSide());
         			tmpOpponentAddToHistory(oldState, newState);
         		}
         		

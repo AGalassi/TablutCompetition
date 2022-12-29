@@ -22,12 +22,49 @@ import javafx.stage.Stage;
  * <a href="https://www.linkedin.com/in/michele-righi/">LinkedIn</a>)
  */
 public class TablutHumanClientGui extends Application {
+	private static String[] args;
 	private Controller controller;
 	
 	@Override
     public void start(Stage primaryStage) {
-		GameInfoDialog gameInfoDialog = new GameInfoDialog("Game Info Dialog", "Please enter game details");
-		Optional<GameInfo> gameInfo = gameInfoDialog.showAndWait();
+		boolean invalidArg = false; // Flag that signals if one or more args are invalid
+		String parameters[] = new String[4];
+		Optional<GameInfo> gameInfo;
+		
+		for(int i = 0; i < 4; i++) {
+			parameters[i] = "";
+		}
+		
+		if(args.length >= 1) {
+			if(GameInfo.validateSide(args[0]))
+				parameters[0] = args[0];
+			else invalidArg = true;
+		}
+		if(!invalidArg && args.length >= 2) {
+			if(GameInfo.validateUsername(args[1]))
+				parameters[1] = args[1];
+			else invalidArg = true;
+		}
+		if(!invalidArg && args.length >= 3) {
+			if(GameInfo.validateTimeout(args[2]))
+				parameters[2] = args[2];
+			else invalidArg = true;
+		}
+		if(!invalidArg && args.length >= 4) {
+			if(GameInfo.validateServerAddress(args[3])) {
+				parameters[3] = args[3];
+			}
+			else invalidArg = true;
+		}
+		
+		if(!invalidArg && args.length == 4) {
+			gameInfo = Optional.of(new GameInfo(parameters[0], parameters[1], parameters[2], parameters[3]));
+		} else {
+			GameInfoDialog gameInfoDialog = new GameInfoDialog("Game Info Dialog", "Please enter game details",
+					parameters[0], parameters[1], parameters[2], parameters[3]);
+    		gameInfo = gameInfoDialog.showAndWait();
+    		
+		}
 		
 		if(!gameInfo.isPresent()) {
 			System.exit(0);
@@ -60,10 +97,9 @@ public class TablutHumanClientGui extends Application {
 		}
     }
 
-    public static void main(String[] args) {
-    	// parse arguments
-    	//if ()
+    public static void main(String[] arguments) {
+    	args = arguments;
     	
-        launch(); // run the JavaFX thread
+        launch(); // Run the JavaFX thread
     }
 }
