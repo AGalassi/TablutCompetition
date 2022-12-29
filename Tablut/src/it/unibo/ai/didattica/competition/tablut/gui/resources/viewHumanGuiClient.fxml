@@ -5,6 +5,7 @@
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.ProgressIndicator?>
 <?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -13,7 +14,7 @@
 <?import javafx.scene.text.Font?>
 
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="960.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="960.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
    <children>
       <AnchorPane fx:id="anchorPaneBoard" layoutX="14.0" layoutY="-38.0" onMouseClicked="#handleBoardClick" prefHeight="464.0" prefWidth="464.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
@@ -128,6 +129,10 @@
             <Font size="24.0" />
          </font>
       </Label>
-      <Button fx:id="buttonEnlarge" layoutX="404.0" layoutY="470.0" maxHeight="-Infinity" maxWidth="-Infinity" mnemonicParsing="false" onAction="#toggleEnlarge" prefHeight="30.0" prefWidth="30.0" AnchorPane.bottomAnchor="2.0" AnchorPane.leftAnchor="432.0" />
+      <Button fx:id="buttonEnlarge" layoutX="404.0" layoutY="470.0" maxHeight="-Infinity" maxWidth="-Infinity" mnemonicParsing="false" onAction="#toggleEnlarge" prefHeight="30.0" prefWidth="30.0" AnchorPane.bottomAnchor="2.0" AnchorPane.rightAnchor="2.0">
+         <tooltip>
+            <Tooltip text="Expand/Shrink UI" />
+         </tooltip>
+      </Button>
    </children>
 </AnchorPane>
