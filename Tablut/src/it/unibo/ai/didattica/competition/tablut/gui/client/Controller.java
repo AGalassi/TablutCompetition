@@ -444,14 +444,17 @@ public class Controller extends TablutClient {
 		if(super.getCurrentState().getTurn().equals(gameInfo.getSide())) {
 			Platform.runLater(() -> {
 				String to = "Turn #" + turnCounter + ": Player" + gameInfo.getOpponentSideString() + " moved to ";
-				for(int row = 0; row < oldState.getBoard().length; row++) {
-					for(int col = 0; col < oldState.getBoard().length; col++) {
+				boolean foundTo = false;
+				
+				for(int row = 0; row < oldState.getBoard().length && !foundTo; row++) {
+					for(int col = 0; col < oldState.getBoard().length && !foundTo; col++) {
+						// If the pawn in that position wasn't there in the previous state, it means it was moved there.
 						if(oldState.getBoard()[row][col].equals(State.Pawn.EMPTY) &&
 								!newState.getBoard()[row][col].equals(State.Pawn.EMPTY)) {
-							char chCol = (char) (row + 65);
+							char chCol = (char) (col + 65);
 							to += "" + chCol + (row+1);
 							
-							break;
+							foundTo = true;
 						}
 					}
 				}
