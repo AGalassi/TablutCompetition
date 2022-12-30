@@ -125,8 +125,6 @@ public class GameInfoDialog extends Dialog<GameInfo>{
 			confirmButton.setDisable(
 					(!(textFieldUsername.getText().trim().isEmpty() || GameInfo.validateUsername(textFieldUsername.getText())) ||
 					!(newValue.isEmpty() || GameInfo.validateServerAddress(newValue))));
-			confirmButton.setDisable(
-					(!GameInfo.validateUsername(newValue)) || !GameInfo.validateServerAddress(textFieldAddress.getText()));
 		});
 		
 		// Request focus on the username field by default.
