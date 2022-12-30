@@ -5,8 +5,8 @@
 }
 
 #enlarge {
-	-fx-background-image: url('../icon-enlarge-dark-100px.png');
+	-fx-background-image: url('../icons/icon-enlarge.png');
 }
 #shrink{
-	-fx-background-image: url('../icon-shrink-dark-100px.png');
+	-fx-background-image: url('../icons/icon-shrink.png');
 }

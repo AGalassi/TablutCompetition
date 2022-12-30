@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.net.ConnectException;
 import java.util.Optional;
 
-import it.unibo.ai.didattica.competition.tablut.gui.Gui;
 import it.unibo.ai.didattica.competition.tablut.gui.client.Controller;
 import it.unibo.ai.didattica.competition.tablut.gui.client.GameInfo;
 import it.unibo.ai.didattica.competition.tablut.gui.client.GameInfoDialog;
@@ -71,11 +70,11 @@ public class TablutHumanClientGui extends Application {
 		}
 		
 		try {
-			FXMLLoader fxmlLoader = new FXMLLoader(Gui.class.getResource("resources/viewHumanGuiClient.fxml"));
+			FXMLLoader fxmlLoader = new FXMLLoader(this.getClass().getResource(Controller.RESOURCE_PATH + "views/viewHumanGuiClient.fxml"));
 		    controller = new Controller(gameInfo.get());
 		    fxmlLoader.setController(controller);
 		    Scene scene = new Scene(fxmlLoader.load(), 464, 500);
-		    scene.getStylesheets().add(Gui.class.getResource("resources/style/style.css").toString());
+		    scene.getStylesheets().add(this.getClass().getResource(Controller.RESOURCE_PATH + "styles/style.css").toString());
 		    primaryStage.setTitle("Tablut");
 		    primaryStage.setResizable(false);
 		    primaryStage.setScene(scene);

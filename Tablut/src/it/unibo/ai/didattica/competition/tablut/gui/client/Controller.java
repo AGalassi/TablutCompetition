@@ -19,7 +19,6 @@ import it.unibo.ai.didattica.competition.tablut.exceptions.OccupitedException;
 import it.unibo.ai.didattica.competition.tablut.exceptions.PawnException;
 import it.unibo.ai.didattica.competition.tablut.exceptions.StopException;
 import it.unibo.ai.didattica.competition.tablut.exceptions.ThroneException;
-import it.unibo.ai.didattica.competition.tablut.gui.Gui;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
@@ -47,6 +46,7 @@ import javafx.stage.Stage;
  * <a href="https://www.linkedin.com/in/michele-righi/">LinkedIn</a>)
  */
 public class Controller extends TablutClient {
+	public final static String RESOURCE_PATH = "/it/unibo/ai/didattica/competition/tablut/gui/resources/client/";
 	private final static double CELL_SIZE = 48.0;
 	private final static int CELL_COUNT = 9;
 	private final static double BORDER_WIDTH = 1.0;
@@ -101,12 +101,12 @@ public class Controller extends TablutClient {
 		this.gameInfo = gameInfo;
 		
 		// Load images
-		imageBoard = new Image(Gui.class.getResourceAsStream("resources/boardAshton.png"));
-		imageBlackPawn = new Image(Gui.class.getResourceAsStream("resources/black3.png"),
+		imageBoard = new Image(this.getClass().getResource(RESOURCE_PATH + "images/boardAshton.png").toString());
+		imageBlackPawn = new Image(this.getClass().getResource(RESOURCE_PATH + "icons/pawnBlack.png").toString(),
 				CELL_SIZE, CELL_SIZE, false, false);
-		imageWhitePawn = new Image(Gui.class.getResourceAsStream("resources/White2.png"),
+		imageWhitePawn = new Image(this.getClass().getResource(RESOURCE_PATH + "icons/pawnWhite.png").toString(),
 				CELL_SIZE, CELL_SIZE, false, false);
-		imageKingPawn = new Image(Gui.class.getResourceAsStream("resources/king.png"),
+		imageKingPawn = new Image(this.getClass().getResource(RESOURCE_PATH + "icons/pawnKing.png").toString(),
 				CELL_SIZE, CELL_SIZE, false, false);
 		
 		coordsFrom = new Coordinate();
@@ -475,7 +475,7 @@ public class Controller extends TablutClient {
 	public void run() {
 		clientRunning = true;
 		
-		System.out.println("Client created:"
+		System.out.println("Client created."
 				+ "\nPlayer: " + gameInfo.getSideString()
 				+ "\nUsername: " + gameInfo.getUsername()
 				+ "\nTimeout: " + gameInfo.getTimeout()
