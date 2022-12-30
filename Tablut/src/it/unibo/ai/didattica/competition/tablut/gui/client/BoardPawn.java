@@ -10,13 +10,15 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 
 /**
- * Cell of the board for the Ashton Tablut Client with Graphical User Interface.
+ * Pawn of the GUI board for the Ashton Tablut Client with Graphical User Interface.
  * 
  * @author Michele Righi
  * (<a href="https://github.com/mikyll">GitHub</a>,
  * <a href="https://www.linkedin.com/in/michele-righi/">LinkedIn</a>)
  */
-public class Cell extends ImageView {
+public class BoardPawn extends ImageView {
+	private final static double OFFSET = 2.0;
+	
 	private BiConsumer<Integer, Integer> selectCallback;
 	private Runnable deselectCallback;
 	
@@ -24,12 +26,31 @@ public class Cell extends ImageView {
 	
 	private double size;
 	private int row, col;
-	private final double offset = 2.0;
 	
 	private DropShadow effectGlow;
 	private DropShadow effectShadow;
 	
-	public Cell(Image image, double size, int row, int col,
+	public static BoardPawn createDestinationBoardPawn(Image image, double size, int row, int col) {
+		BoardPawn res = new BoardPawn(image, size, row, col);
+		res.setLayoutX(col * size - OFFSET);
+		res.setLayoutY(row * size - OFFSET);
+		
+		DropShadow effectShadow = new DropShadow();
+		effectShadow.setWidth(30.0);
+		effectShadow.setHeight(30.0);
+		effectShadow.setRadius(15.0);
+		effectShadow.setSpread(0.4);
+		effectShadow.setOffsetX(OFFSET * 2);
+		effectShadow.setOffsetY(OFFSET * 2);
+		res.setEffect(effectShadow);
+		
+		return res;
+	}
+	
+	public BoardPawn(Image image, double size, int row, int col) {
+		this(image, size, row, col, false, null, null);
+	}
+	public BoardPawn(Image image, double size, int row, int col,
 			boolean selectable,
 			BiConsumer<Integer, Integer> select,
 			Runnable deselect) {
@@ -57,8 +78,8 @@ public class Cell extends ImageView {
 		effectShadow.setHeight(30.0);
 		effectShadow.setRadius(15.0);
 		effectShadow.setSpread(0.4);
-		effectShadow.setOffsetX(offset * 2);
-		effectShadow.setOffsetY(offset * 2);
+		effectShadow.setOffsetX(OFFSET * 2);
+		effectShadow.setOffsetY(OFFSET * 2);
 
 		if(selectable) {
 			super.setOnMouseClicked(this::toggle);
@@ -76,7 +97,7 @@ public class Cell extends ImageView {
 				}
 			});
 		}
-		super.disableProperty().addListener((observable, oldValue, newValue) -> {System.out.println("changed: " + oldValue + ", " + newValue); super.setOpacity(newValue == true ? 0.8 : 1);});
+		//super.disableProperty().addListener((observable, oldValue, newValue) -> {System.out.println("changed: " + oldValue + ", " + newValue); super.setOpacity(newValue == true ? 0.8 : 1);});
 	}
 	
 	public void toggle(MouseEvent event) {
@@ -92,12 +113,12 @@ public class Cell extends ImageView {
 	public void select() {
 		selected = true;
 		
-		super.setLayoutX(col * size - offset);
-		super.setLayoutY(row * size - offset);
+		super.setLayoutX(col * size - OFFSET);
+		super.setLayoutY(row * size - OFFSET);
 		
 		super.setEffect(effectShadow);
 		
-		super.setOpacity(0.7);
+		super.setOpacity(0.5);
 	}
 	public void deselect() {
 		selected = false;
@@ -111,5 +132,13 @@ public class Cell extends ImageView {
 	}
 	public boolean isSelected() {
 		return selected;
+	}
+	
+	public void setBoardPosition(Coordinate coord) {
+		setBoardPosition(coord.getRow(), coord.getCol());
+	}
+	public void setBoardPosition(int row, int col) {
+		super.setLayoutX(col * size - OFFSET);
+		super.setLayoutY(row * size - OFFSET);
 	}
 }

@@ -62,7 +62,8 @@ public class Controller extends TablutClient {
 	@FXML private ImageView imageViewBoard;
 	private VBox vboxRowCoordinates;
 	private HBox hboxColCoordinates;
-	private Cell[][] cells; // [row][column]
+	private BoardPawn[][] boardPawns; // [row][column]
+	private BoardPawn destinationPawn;
 	
 	// UI
 	@FXML private Label labelServerIP;
@@ -86,9 +87,9 @@ public class Controller extends TablutClient {
 	private AllowedMoves allowedMoves;
 	private Shape highlight;
 	
+	private GameAshtonTablut game;
 	private Thread threadClient;
 	private volatile boolean clientRunning = false;
-	private GameAshtonTablut game;
 	private int turnCounter = 0;
 	private LocalTime startTime;
 	
@@ -210,33 +211,33 @@ public class Controller extends TablutClient {
 			anchorPaneBoard.getChildren().add(vboxRowCoordinates);
 			anchorPaneBoard.getChildren().add(hboxColCoordinates);
 			
-			cells = new Cell[state.getBoard().length][state.getBoard().length];
+			boardPawns = new BoardPawn[state.getBoard().length][state.getBoard().length];
 			
 			// rows
 			for(int row = 0; row < state.getBoard().length; row++) {
 				// columns
 				for(int col = 0; col < state.getBoard().length; col++) {
-					Cell cell = null;
+					BoardPawn boardPawn = null;
 					if(state.getPawn(row, col).equalsPawn("B")) {
-						cell = new Cell(imageBlackPawn, CELL_SIZE, row, col,
+						boardPawn = new BoardPawn(imageBlackPawn, CELL_SIZE, row, col,
 								state.getTurn().equals(State.Turn.BLACK) && gameInfo.getSide().equals(State.Turn.BLACK),
 								(r, c) -> selectPawn(r, c), () -> deselectPawn());
 					}
 					else if(state.getPawn(row, col).equalsPawn("W")) {
-						cell = new Cell(imageWhitePawn, CELL_SIZE, row, col,
+						boardPawn = new BoardPawn(imageWhitePawn, CELL_SIZE, row, col,
 								state.getTurn().equals(State.Turn.WHITE) && gameInfo.getSide().equals(State.Turn.WHITE),
 								(r, c) -> selectPawn(r, c), () -> deselectPawn());
 					}
 					else if(state.getPawn(row, col).equalsPawn("K")) {
-						cell = new Cell(imageKingPawn, CELL_SIZE, row, col,
+						boardPawn = new BoardPawn(imageKingPawn, CELL_SIZE, row, col,
 								state.getTurn().equals(State.Turn.WHITE) && gameInfo.getSide().equals(State.Turn.WHITE),
 								(r, c) -> selectPawn(r, c), () -> deselectPawn());
 					}
-					if(cell != null) {
-						cell.setLayoutX(BORDER_WIDTH + col * CELL_SIZE);
-						cell.setLayoutY(BORDER_WIDTH + row * CELL_SIZE);
-						anchorPaneBoard.getChildren().add(cell);
-						cells[row][col] = cell;
+					if(boardPawn != null) {
+						boardPawn.setLayoutX(BORDER_WIDTH + col * CELL_SIZE);
+						boardPawn.setLayoutY(BORDER_WIDTH + row * CELL_SIZE);
+						anchorPaneBoard.getChildren().add(boardPawn);
+						boardPawns[row][col] = boardPawn;
 					}
 				}
 			}
@@ -254,11 +255,18 @@ public class Controller extends TablutClient {
 		labelMoveTo.setText("");
 		
 		highlightAllowedMoves(row, col);
+		
+		// Create new "fake" pawn
+		destinationPawn = BoardPawn.createDestinationBoardPawn(gameInfo.getSide().equals(State.Turn.WHITE) ? imageWhitePawn : imageBlackPawn, CELL_SIZE, row, col);
+		destinationPawn.setVisible(false);
+		
+		anchorPaneBoard.getChildren().add(destinationPawn);
+		anchorPaneBoard.getScene().setOnMouseMoved(me -> handleMouseHover(me));
 	}
 	
 	private void deselectPawn() {
-		if(cells[coordsFrom.getRow()][coordsFrom.getCol()] != null) {
-			cells[coordsFrom.getRow()][coordsFrom.getCol()].deselect();
+		if(boardPawns[coordsFrom.getRow()][coordsFrom.getCol()] != null) {
+			boardPawns[coordsFrom.getRow()][coordsFrom.getCol()].deselect();
 		}
 		
 		resetMove();
@@ -270,6 +278,12 @@ public class Controller extends TablutClient {
 			
 			allowedMoves = null;
 			highlight = null;
+		}
+		
+		if(destinationPawn != null) {
+			anchorPaneBoard.getChildren().remove(destinationPawn);
+			destinationPawn = null;
+			anchorPaneBoard.getScene().setOnMouseMoved(null);
 		}
 	}
 
@@ -383,10 +397,28 @@ public class Controller extends TablutClient {
 		});
 	}
 	
+	private void handleMouseHover(MouseEvent event) {
+		int row = (int) (event.getY() / CELL_SIZE);
+		int col = (int) (event.getX() / CELL_SIZE);
+		
+		if(isDestinationAllowed(row, col)) {
+			labelMoveTo.setText(getCoordsString(row, col).toUpperCase());
+			coordsTo = new Coordinate(row, col);
+			
+			destinationPawn.setVisible(true);
+			destinationPawn.setBoardPosition(coordsTo);
+		}
+		else {
+			labelMoveTo.setText("");
+			
+			destinationPawn.setVisible(false);
+		}
+	}
+	
 	@FXML
 	private void handleBoardClick(MouseEvent event) {
-		int row = (int) event.getY() / 48;
-		int col = (int) event.getX() / 48;
+		int row = (int) (event.getY() / CELL_SIZE);
+		int col = (int) (event.getX() / CELL_SIZE);
 		
 		if(isDestinationAllowed(row, col)) {
 			labelMoveTo.setText(getCoordsString(row, col).toUpperCase());
