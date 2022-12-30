@@ -257,7 +257,10 @@ public class Controller extends TablutClient {
 		highlightAllowedMoves(row, col);
 		
 		// Create new "fake" pawn
-		destinationPawn = BoardPawn.createDestinationBoardPawn(gameInfo.getSide().equals(State.Turn.WHITE) ? imageWhitePawn : imageBlackPawn, CELL_SIZE, row, col);
+		destinationPawn = BoardPawn.createDestinationBoardPawn(
+				getCurrentState().getPawn(row, col).equalsPawn("B") ? imageBlackPawn :
+					(getCurrentState().getPawn(row, col).equalsPawn("W") ? imageWhitePawn: imageKingPawn),
+				CELL_SIZE, row, col);
 		destinationPawn.setVisible(false);
 		
 		anchorPaneBoard.getChildren().add(destinationPawn);
