@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.ProgressIndicator?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="960.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <AnchorPane fx:id="anchorPaneBoard" layoutX="14.0" layoutY="-38.0" onMouseClicked="#handleBoardClick" prefHeight="464.0" prefWidth="464.0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <ImageView fx:id="imageViewBoard" fitHeight="434.0" fitWidth="434.0" mouseTransparent="true" pickOnBounds="true" preserveRatio="true" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="0.0">
+               <image>
+                  <Image url="@boardAshton.png" />
+               </image>
+            </ImageView>
+         </children>
+      </AnchorPane>
+      <VBox alignment="TOP_CENTER" layoutX="475.0" prefHeight="500.0" prefWidth="475.0">
+         <children>
+            <Label text="Actions History">
+               <font>
+                  <Font size="28.0" />
+               </font>
+            </Label>
+            <ListView fx:id="listViewActionsHistory" focusTraversable="false" prefHeight="300.0" prefWidth="450.0" />
+            <Separator prefHeight="20.0" prefWidth="450.0" visible="false" />
+            <HBox alignment="CENTER" prefHeight="50.0" prefWidth="450.0">
+               <children>
+                  <Label text="Player:  ">
+                     <font>
+                        <Font size="28.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="labelPlayerName" prefHeight="40.0" text="PlayerWhite">
+                     <font>
+                        <Font name="System Bold" size="28.0" />
+                     </font>
+                  </Label>
+                  <Separator orientation="VERTICAL" prefHeight="43.0" prefWidth="15.0" visible="false" />
+                  <Label fx:id="labelPlayerPawn1" prefHeight="40.0" prefWidth="40.0">
+                     <font>
+                        <Font size="28.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="labelPlayerPawn2" prefHeight="40.0" prefWidth="40.0">
+                     <font>
+                        <Font size="28.0" />
+                     </font>
+                  </Label>
+               </children>
+            </HBox>
+            <Separator prefHeight="20.0" prefWidth="450.0" visible="false" />
+            <AnchorPane prefHeight="100.0" prefWidth="200.0">
+               <children>
+                  <Label fx:id="labelTurn" layoutX="10.0" layoutY="8.0" text="Turn #0" AnchorPane.leftAnchor="0.0" AnchorPane.topAnchor="10.0">
+                     <font>
+                        <Font size="24.0" />
+                     </font>
+                  </Label>
+                  <HBox fx:id="hboxWaitingOpponent" alignment="CENTER" layoutX="112.0" prefHeight="100.0" prefWidth="315.0" visible="false" AnchorPane.rightAnchor="0.0">
+                     <children>
+                        <ProgressIndicator prefHeight="41.0" prefWidth="43.0" />
+                        <Separator orientation="VERTICAL" prefHeight="100.0" prefWidth="20.0" visible="false" />
+                        <Label prefHeight="80.0" prefWidth="262.0" text="Waiting opponent's turn..." wrapText="true">
+                           <font>
+                              <Font size="24.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </HBox>
+                  <HBox fx:id="hboxMyTurn" alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="275.0" AnchorPane.rightAnchor="0.0">
+                     <children>
+                        <Label text="Move:    ">
+                           <font>
+                              <Font size="24.0" />
+                           </font>
+                        </Label>
+                        <VBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="150.0">
+                           <children>
+                              <HBox alignment="CENTER_LEFT" prefHeight="40.0" prefWidth="200.0">
+                                 <children>
+                                    <Label prefHeight="40.0" text="From:  ">
+                                       <font>
+                                          <Font size="24.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="labelMoveFrom" text="-">
+                                       <font>
+                                          <Font size="24.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                              </HBox>
+                              <HBox alignment="CENTER_LEFT" prefHeight="40.0" prefWidth="200.0">
+                                 <children>
+                                    <Label prefHeight="40.0" text="To:      ">
+                                       <font>
+                                          <Font size="24.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="labelMoveTo" prefHeight="40.0" text="-">
+                                       <font>
+                                          <Font size="24.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                              </HBox>
+                           </children>
+                        </VBox>
+                     </children>
+                  </HBox>
+               </children>
+            </AnchorPane>
+         </children>
+      </VBox>
+      <Label fx:id="labelServerIP" layoutX="37.0" layoutY="467.0" text=" Server IP: 127.0.0.1" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" />
+      <HBox alignment="CENTER" prefHeight="36.0" prefWidth="200.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="145.0">
+         <children>
+            <Label text="Timer:  ">
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </Label>
+            <Label fx:id="labelTimer" alignment="CENTER_RIGHT" prefHeight="35.0" text="00:00">
+               <font>
+                  <Font size="24.0" />
+               </font>
+            </Label>
+         </children>
+      </HBox>
+      <Button fx:id="buttonEnlarge" layoutX="404.0" layoutY="470.0" maxHeight="-Infinity" maxWidth="-Infinity" mnemonicParsing="false" onAction="#toggleEnlarge" prefHeight="30.0" prefWidth="30.0" AnchorPane.bottomAnchor="2.0" AnchorPane.rightAnchor="2.0">
+         <tooltip>
+            <Tooltip text="Expand/Shrink UI" />
+         </tooltip>
+      </Button>
+   </children>
+</AnchorPane>

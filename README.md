@@ -62,3 +62,12 @@ Example:
 java -jar .\server.jar -g -R .\logs\PLAYER1_vs_PLAYER2_1652711382324_gameLog.txt
 ```
 
+## Tablut Client with GUI
+
+Follow the instruction in [TablutClientGUI.md](./TablutClientGUI.md).
+
+<div align="center">
+<img width="50%" src="https://user-images.githubusercontent.com/56556806/210098077-4e564401-9518-4437-852c-70db378e1990.gif">
+<br/>
+Demo
+</div>

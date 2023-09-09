@@ -1,0 +1,12 @@
+.button {
+	-fx-background-size: 30px;
+    -fx-background-repeat: no-repeat;
+    -fx-background-position: 50%;
+}
+
+#enlarge {
+	-fx-background-image: url('../icons/icon-enlarge.png');
+}
+#shrink{
+	-fx-background-image: url('../icons/icon-shrink.png');
+}
