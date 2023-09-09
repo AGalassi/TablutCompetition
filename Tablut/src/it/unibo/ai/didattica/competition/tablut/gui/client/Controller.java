@@ -19,6 +19,7 @@ import it.unibo.ai.didattica.competition.tablut.exceptions.OccupitedException;
 import it.unibo.ai.didattica.competition.tablut.exceptions.PawnException;
 import it.unibo.ai.didattica.competition.tablut.exceptions.StopException;
 import it.unibo.ai.didattica.competition.tablut.exceptions.ThroneException;
+import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
@@ -123,7 +124,7 @@ public class Controller extends TablutClient {
 		// Setup timer
 		timer = new Timeline(new KeyFrame(javafx.util.Duration.seconds(1), 
 				ae -> timerTick(ae)));
-		timer.setCycleCount(gameInfo.getTimeout()); // Animation.INDEFINITE for a never ending timer
+		timer.setCycleCount(Animation.INDEFINITE); // Animation.INDEFINITE for a never ending timer
 	}
 	
 	public void initialize() {
@@ -187,16 +188,12 @@ public class Controller extends TablutClient {
 		// Color change
 		if(timeout <= 15)
 			labelTimer.setStyle("-fx-text-fill: rgb(235,180,0)");
-		if(timeout <= 10) 
+		if(timeout <= 10)
 			labelTimer.setStyle("-fx-text-fill: rgb(235,120,0)");
-		if(timeout <= 5) 
+		if(timeout <= 5)
 			labelTimer.setStyle("-fx-text-fill: red");
 		
 		// update countdown
-		//int min = timeout / 60;
-		//int sec = timeout % 60;
-		//String seconds = sec < 10 ? ("0" + sec) : ("" + sec);
-		//labelTimer.setText("" + min + ":" + seconds);
 		labelTimer.setText(String.format("%02d:%02d", timeout / 60, timeout % 60));
 		
 		if(timeout == 0) {
@@ -456,6 +453,12 @@ public class Controller extends TablutClient {
 		String from = "", to = "";
 		for(int row = 0; row < oldState.getBoard().length; row++) {
 			for(int col = 0; col < oldState.getBoard().length; col++) {
+				// Get from
+				if (!oldState.getBoard()[row][col].equals(State.Pawn.EMPTY) &&
+						newState.getBoard()[row][col].equals(State.Pawn.EMPTY)) {
+
+				}
+
 				if(oldState.getBoard()[row][col].equals(State.Pawn.EMPTY) &&
 						!newState.getBoard()[row][col].equals(State.Pawn.EMPTY)) {
 					char chCol = (char) (row + 97);
@@ -475,6 +478,7 @@ public class Controller extends TablutClient {
 		}
 		return new Action(from, to, oldState.getTurn());
 	}
+	// Temporary solution: provides only the destination
 	private void tmpOpponentAddToHistory(State oldState, State newState) {
 		if(super.getCurrentState().getTurn().equals(gameInfo.getSide())) {
 			Platform.runLater(() -> {
